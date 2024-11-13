@@ -13,7 +13,7 @@ donut_website/
     ├── donut.js
     ├── clock.js
 ├── index.html
-├── donut.wasm
+├── index.wasm
 └── other files...
 
 ## Setup Instructions
