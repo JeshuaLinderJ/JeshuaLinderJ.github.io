@@ -12,7 +12,7 @@ donut_website/
 ├── static/
     ├── donut.js
     ├── clock.js
-├── donut.html
+├── index.html
 ├── donut.wasm
 └── other files...
 
