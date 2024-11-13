@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinning Donut</title>
+    <script src="static/donut.js"></script>
+    <script src="static/clock.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <audio id="button-sound" src="sounds/menu_select01.mp3" preload="auto"></audio>
+    <style>
+        /* Default link color */
+        a {
+            color: rgb(255, 68, 55);
+            text-decoration: none;
+        }        
+
+        /* Hover state for links */
+        a:hover {
+            color: rgb(255, 68, 55);
+            text-decoration: underline;
+        }
+
+        /* Visited link color */
+        a:visited {
+            color: rgb(255, 68, 55);
+            text-decoration: none;
+        }
+
+        /* Active link color (when clicked) */
+        a:active {
+            color: rgb(140, 240, 240);
+        }
+    </style>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Play', sans-serif;
+            color: #3a3a3a;
+            background: #130c14;
+            display: flex;
+            padding: 2rem;
+            flex-grow: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: auto;
+            background-image: radial-gradient(circle at 35% -35%, rgb(162, 14, 24), rgb(58, 12, 15), rgb(32, 16, 20), rgb(13, 15, 20),rgb(6, 10, 15),rgb(6, 8, 12));
+
+        }
+
+        /* Header Styling */
+        header {
+            text-align: left;
+            padding: 1rem;
+            padding-top: 10px;
+            width: 85%;
+            height: 200px;
+            background: rgb(17, 12, 19);
+            color: rgb(255, 68, 55);
+            animation: fadeIn 1.5s ease-out forwards;
+            text-shadow: 1px -2px 0 red, -1px 2px 0 blue;
+            border-color: rgb(70, 30, 30);
+            border-style: solid;
+            border-radius: .1cm;
+            border-width: 1px;
+        }
+
+        header h1 {
+            font-size: 1.5em;
+            margin-bottom: 0rem;
+            margin-top: 0rem;;
+        }
+
+
+        /* Button Styling */
+        .control-button {
+            font-family: "Courier New", Courier, monospace;
+            display: block;
+            padding-top: 0px;
+            padding-left: 0px;
+            margin-left: 0px;
+            margin-top: 50px;
+            height: 25px;
+            width: 150px;
+            font-size: 1em;
+            color: rgb(255, 68, 55);
+            background-color: rgb(17, 12, 19);
+            border-style: solid;
+            border-color: rgb(16, 12, 19);
+            border-radius: 3.5px;
+            cursor: pointer;
+            transition: all .25s ease;
+        }
+
+        .control-button:hover {
+            transform: translateX(-5px);
+            color: rgb(140, 240, 240);
+            background-color: rgb(33, 40, 40);
+            border-color: rgb(68, 116, 128);
+            border-width: 1px;
+        }
+
+        .control-button:active {
+            color: #FDF500;
+        }
+
+        /* Active State */
+        .control-button.active {
+            transform: translateX(5px);
+            color: #FDF500;
+            background: none;
+            background-color: rgb(16, 12, 19);
+            border: none;
+            width: auto;
+        }
+
+        /* Output Area Styling */
+        #output {
+            text-align: right;
+            font-family: monospace;
+            font-size: .25em;
+            color: rgb(230, 180, 85);
+            padding-top: 20px;
+            padding-right: 25px;
+            padding-bottom: 0px;
+            height: 0px;
+            background: rgba(17, 12, 19, 0);
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        #clock {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            font-family: 'Play', sans-serif;
+            color: rgb(255, 68, 55);
+            text-shadow: 0 0 10px rgb(255, 125, 115), 0 0 1px rgb(130, 60, 50), 0 0 15px rgb(43, 15, 15);
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+
+        /* Glitch Text Styling */
+        .glitch-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .glitch span {
+            font-weight: bold;
+            grid-row-start: 1;
+            grid-column-start: 1;
+            font-size: 2em;
+            --glitch-height: calc(100% / var(--glitch-layers) - 1px);
+            --inverse-index: calc(calc(var(--glitch-layers) - 1) - var(--index));
+            --clip-top: calc(var(--glitch-height) * var(--index));
+            --clip-bottom: calc(var(--glitch-height) * var(--inverse-index));
+            clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
+            color: rgb(255, 68, 55);
+            animation: glitch-anim 340ms cubic-bezier(.46, .29, 0, 1.24) 1 backwards calc(var(--index) * 120ms), glitch-shift 2s ease infinite 2s alternate-reverse;
+        }
+
+        .glitch span:nth-child(odd) { --glitch-translate: 8px; }
+        .glitch span:nth-child(even) { --glitch-translate: -8px; }
+
+        /* Glitch Keyframe Animations */
+        @keyframes glitch-anim {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%);
+                text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+            }
+            60% {
+                opacity: 0.5;
+                transform: translateX(50%);
+            }
+            80% {
+                transform: none;
+                opacity: 1;
+                text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+            }
+            100% {
+                text-shadow: none;
+            }
+        }
+
+        @keyframes glitch-shift {
+            0% {
+                text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+                transform: translate(var(--glitch-translate));
+            }
+            2% {
+                text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+            }
+            4%, 100% {  
+                text-shadow: none;
+                transform: none; 
+            }
+        }
+
+        /* Footer Styling */
+        footer {
+            margin-top: 250px;
+            padding: 1rem;
+            width: 100%;
+            background-color: rgba(17, 12, 19, 0.5);
+            color: rgb(255, 68, 55);
+            text-shadow: 0 0 .5px rgb(255, 125, 115), 0 0 1px rgb(130, 60, 50), 0 0 2.5px rgb(43, 15, 15);
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.5em;
+            text-align: left;
+            border-color: rgb(70, 30, 30);
+            border-style: solid;
+            border-radius: .1cm;
+            border-width: 1px;
+        }
+
+        footer ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+
+        footer ul li {
+            margin: 2.5px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Clock container -->
+    <div id="clock"></div>
+    <!-- Rest of the website content -->
+
+    <script src="script.js"></script>
+    <!-- Header with Title and Controls -->
+    <header>
+        <!-- Output area for the donut -->
+        <pre id="output"></pre>
+
+        <h1 class="glitch-container">
+            <div class="glitch" style="--glitch-layers: 3;">
+                <span style="--index: 0;">SPINNING DONUT.cpp</span>
+                <span style="--index: 1;">SPINNING DONUT.cpp</span>
+                <span style="--index: 2;">SPINNING DONUT.cpp</span>
+            </div>
+        </h1>
+
+
+        <button class="control-button" onclick="toggleAnimation()">~ $kill program</button>
+
+        
+    </header>
+
+    <script>
+        // JavaScript function to play sound
+
+        const output = document.getElementById("output");
+        let animationActive = true;
+        let animationFrameId;  // To store the ID of requestAnimationFrame
+
+        // Initialize WebAssembly Module
+        Module.onRuntimeInitialized = () => {
+            const renderFrame = Module.cwrap("renderFrame", null, ["number", "number"]);
+            const getFrameBuffer = Module.cwrap("getFrameBuffer", "string");
+
+            let A = 0, B = 0;
+
+            // Render loop
+            function renderLoop() {
+                if (animationActive) {
+                    renderFrame(A, B);
+                    let frameBuffer = getFrameBuffer();
+
+                    // Format frameBuffer into rows for the output
+                    const rows = [];
+                    const width = 30;
+
+                    for (let i = 0; i < frameBuffer.length; i += width) {
+                        rows.push(frameBuffer.slice(i, i + width));
+                    }
+                    output.textContent = rows.join("\n");
+
+                    A += 0.04;
+                    B += 0.02;
+
+                    // Use requestAnimationFrame for smoother animation
+                    animationFrameId = requestAnimationFrame(renderLoop);
+                }
+            }
+
+            renderLoop(); // Start the animation loop
+        };
+
+        // Toggle animation state
+        function toggleAnimation() {
+
+            const sound = document.getElementById("button-sound");
+            sound.play();
+
+            animationActive = !animationActive;
+            
+            const button = document.querySelector('.control-button');
+            button.classList.toggle("active", !animationActive);
+
+            
+
+
+            // toggle animation loop
+            // if (animationActive) {
+            //     renderLoop(); // Restart the animation loop
+            // } else {
+            //     stopAnimationFrame(animationFrameId); // Stop the animation loop
+            // }
+
+            button.disabled = true; // Disable the button
+            button.classList.add("disabled-button"); // Optionally add a disabled style
+            
+            // Update button text
+            button.textContent = "program_terminated.2077";
+        }
+        
+    </script>
+
+
+    <!-- Footer with References -->
+    <footer>
+        <p></span> Created by: </span><strong id="creator-name">Jeshua Linder Jiménez</strong></p>
+        <ul>
+            <li>Font: <a href="https://fonts.google.com/specimen/Play" target="_blank" rel="noopener noreferrer">Play Font from Google Fonts</a></li>
+            <li>Library: <a href="https://webassembly.org/" target="_blank" rel="noopener noreferrer">WebAssembly</a></li>
+            <li>Audio: <a href="https://www.youtube.com/watch?v=YNSbL-Cek1c" target="_blank" rel="noopener noreferrer">Menu Select Sound</a></li>
+        </ul>
+    </footer>
+
+</body>
+</html>

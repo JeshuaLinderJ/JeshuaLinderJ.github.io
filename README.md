@@ -9,8 +9,10 @@ Website designed to display fun C++ projects
 
 donut_website/
 ├── Dockerfile
+├── static/
+    ├── donut.js
+    ├── clock.js
 ├── donut.html
-├── donut.js
 ├── donut.wasm
 └── other files...
 
