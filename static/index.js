@@ -2,3 +2,13 @@ var Module=typeof Module!="undefined"?Module:{};var ENVIRONMENT_IS_WEB=typeof wi
 
 
 
+fetch('index.wasm')
+    .then(response => response.arrayBuffer())
+    .then(bytes => WebAssembly.instantiate(bytes))
+    .then(wasmModule => {
+        // Your WebAssembly code here, for example:
+        console.log(wasmModule);
+    })
+    .catch(err => {
+        console.error("Error loading WASM: ", err);
+    });
