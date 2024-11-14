@@ -2,7 +2,7 @@ var Module=typeof Module!="undefined"?Module:{};var ENVIRONMENT_IS_WEB=typeof wi
 
 
 
-fetch('index.wasm')
+fetch('static/index.wasm')
     .then(response => response.arrayBuffer())
     .then(bytes => WebAssembly.instantiate(bytes))
     .then(wasmModule => {
