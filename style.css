@@ -50,6 +50,15 @@ button:hover {
     
 }
 
+/* Style for potentially destructive buttons */
+button.danger-btn {
+    background-color: #dc3545; /* Red */
+}
+
+button.danger-btn:hover {
+    background-color: #c82333; /* Darker Red */
+}
+
 .actions button {
     flex-grow: 1; /* Make buttons share space */
 }
@@ -118,4 +127,69 @@ button:hover {
 #emptyLogMessage {
     color: #777;
     font-style: italic;
+}
+
+/* Responsive Table Styles for Mobile */
+@media screen and (max-width: 600px) {
+    #salesLogTable thead {
+        /* Hide table headers on small screens */
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+
+    #salesLogTable tr {
+        /* Make rows behave like cards */
+        display: block;
+        margin-bottom: .625em;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    #salesLogTable td {
+        /* Make cells stack vertically */
+        display: block;
+        text-align: right; /* Align data to the right */
+        font-size: .9em;
+        border-bottom: 1px dotted #ccc;
+        padding-left: 50%; /* Make space for the label */
+        position: relative; /* Needed for pseudo-element positioning */
+    }
+
+    #salesLogTable td::before {
+        /* Add the header label before the cell data */
+        content: attr(data-label);
+        position: absolute;
+        left: 10px; /* Position label on the left */
+        width: 45%; /* Control label width */
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #555;
+    }
+
+    #salesLogTable td:last-child {
+        border-bottom: 0; /* Remove border from last cell in the stack */
+    }
+
+    /* Adjust delete button alignment in stacked view */
+    #salesLogTable td[data-label="Action"] {
+        text-align: center; /* Center the delete button */
+        padding-left: 10px; /* Reset padding for action cell */
+    }
+    #salesLogTable td[data-label="Action"]::before {
+         display: none; /* Hide label for action cell if not needed */
+    }
+    #salesLogTable button.delete-btn {
+        width: auto; /* Allow button to size naturally */
+        margin: 5px 0; /* Add some margin */
+    }
+
 }
