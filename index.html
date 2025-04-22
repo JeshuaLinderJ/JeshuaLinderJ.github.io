@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Logger PWA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff6347"/> <!-- Tomato color -->
+    <!-- Add to home screen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pizza Log">
+    <!-- Link to an icon file (replace with your actual icon path) -->
+    <link rel="apple-touch-icon" href="images/icon-192x192.png"> 
+</head>
+<body>
+    <h1>Pizza Stand Sales Logger</h1>
+
+    <div class="order-details">
+        <h2>Order Details</h2>
+        <label for="flavor1">Pizza Flavor 1:</label>
+        <select id="flavor1">
+            <option>Pepperoni</option>
+            <option>Cheese</option>
+            <option>Meat Lovers</option>
+            <option>Other</option>
+        </select>
+
+        <label for="flavor2">Pizza Flavor 2 (for Combo):</label>
+        <select id="flavor2">
+            <option>Pepperoni</option>
+            <option>Cheese</option>
+            <option>Meat Lovers</option>
+            <option>Other</option>
+        </select>
+
+        <label for="drink">Drink (for Combo/Drink):</label>
+        <select id="drink">
+            <option>Coca Cola</option>
+            <option>Sprite</option>
+            <option>Water</option>
+            <option>Other</option>
+        </select>
+    </div>
+
+    <div class="actions">
+        <button id="logSlice">Log 1 Slice ($2.50)</button>
+        <button id="logCombo">Log Combo ($5.00)</button>
+        <button id="logDrink">Log Drink ($1.00)</button>
+    </div>
+
+    <div class="export">
+        <button id="exportCSV">Export Data to CSV</button>
+    </div>
+
+    <div class="status">
+        <p id="statusMessage">Ready.</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
