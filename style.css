@@ -21,7 +21,7 @@ label {
     display: block;
     margin-top: 10px;
     margin-bottom: 5px;
-    color: #555;
+    color: #444444;
 }
 
 select {
@@ -34,7 +34,7 @@ select {
 }
 
 button {
-    background-color: #ff6347; /* Tomato */
+    background-color: #4b60a8;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -46,7 +46,8 @@ button {
 }
 
 button:hover {
-    background-color: #e55337;
+    background-color: #977bbb;
+    
 }
 
 .actions button {
@@ -64,5 +65,57 @@ button:hover {
 
 .status p {
     color: #333;
+    font-style: italic;
+}
+
+.log-display {
+    background-color: #fff;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#salesLogTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#salesLogTable th, #salesLogTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#salesLogTable th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+#salesLogTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#salesLogTable tr:hover {
+    background-color: #f1f1f1;
+}
+
+#salesLogTable button.delete-btn {
+    background-color: #ca8289; /* Red */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+#salesLogTable button.delete-btn:hover {
+    background-color: #87000e;
+}
+
+#emptyLogMessage {
+    color: #777;
     font-style: italic;
 }

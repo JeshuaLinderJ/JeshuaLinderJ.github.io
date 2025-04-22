@@ -58,6 +58,30 @@
         <p id="statusMessage">Ready.</p>
     </div>
 
+    <!-- Add Log Table Section -->
+    <div class="log-display">
+        <h2>Sales Log</h2>
+        <div id="logTableContainer">
+            <table id="salesLogTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Item</th>
+                        <th>Flavor 1</th>
+                        <th>Flavor 2</th>
+                        <th>Drink</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody">
+                    <!-- Log rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <p id="emptyLogMessage" style="display: none; text-align: center; margin-top: 10px;">No sales logged yet.</p>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
