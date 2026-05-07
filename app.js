@@ -51,7 +51,7 @@ const clearCacheButton = document.getElementById('clearCacheButton');
 const flavor1Field = document.getElementById('flavor1Field');
 const flavor2Field = document.getElementById('flavor2Field');
 const drinkField   = document.getElementById('drinkField');
-const summaryRevenue = document.getElementById('summaryRevenue');
+const headerRevenue  = document.getElementById('headerRevenue');
 const summarySlices  = document.getElementById('summarySlices');
 const summaryCombos  = document.getElementById('summaryCombos');
 const summaryDrinks  = document.getElementById('summaryDrinks');
@@ -86,7 +86,7 @@ function updateSummary() {
         else if (sale.Item === 'Combo') combos++;
         else if (sale.Item === 'Drink') drinks++;
     });
-    summaryRevenue.textContent = '$' + (revenue / 100).toFixed(2);
+    headerRevenue.textContent = '$' + (revenue / 100).toFixed(2);
     summarySlices.textContent  = slices;
     summaryCombos.textContent  = combos;
     summaryDrinks.textContent  = drinks;

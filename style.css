@@ -31,6 +31,33 @@ body {
     padding: calc(18px + env(safe-area-inset-top)) 20px 14px;
     border-bottom: 4px solid #8e1b0e;
     margin-bottom: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.header-revenue {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.header-revenue-label {
+    display: block;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 2px;
+}
+
+.header-revenue-value {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: 'Oswald', system-ui, sans-serif;
+    line-height: 1;
 }
 
 .app-header h1 {
@@ -42,6 +69,8 @@ body {
     letter-spacing: 0.04em;
     text-transform: uppercase;
     margin: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 /* ── Main content padding ── */
