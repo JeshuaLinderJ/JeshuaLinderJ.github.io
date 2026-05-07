@@ -38,9 +38,6 @@ function saveConfig() {
 const flavor1Select = document.getElementById('flavor1');
 const flavor2Select = document.getElementById('flavor2');
 const drinkSelect = document.getElementById('drink');
-const logSliceButton = document.getElementById('logSlice');
-const logComboButton = document.getElementById('logCombo');
-const logDrinkButton = document.getElementById('logDrink');
 const exportCSVButton = document.getElementById('exportCSV');
 const statusMessage = document.getElementById('statusMessage');
 // New elements for log display
@@ -48,9 +45,6 @@ const logTableBody = document.getElementById('logTableBody');
 const emptyLogMessage = document.getElementById('emptyLogMessage');
 const clearLogsButton = document.getElementById('clearLogsButton');
 const clearCacheButton = document.getElementById('clearCacheButton');
-const flavor1Field = document.getElementById('flavor1Field');
-const flavor2Field = document.getElementById('flavor2Field');
-const drinkField   = document.getElementById('drinkField');
 const headerRevenue  = document.getElementById('headerRevenue');
 const summarySlices  = document.getElementById('summarySlices');
 const summaryCombos  = document.getElementById('summaryCombos');
@@ -58,6 +52,7 @@ const summaryDrinks  = document.getElementById('summaryDrinks');
 const summaryTotal   = document.getElementById('summaryTotal');
 
 let _logPending = false;
+let selectedType = 'Slice';
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -181,10 +176,6 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
     // drinkSelect.selectedIndex = 0;
 }
 
-function setMode(mode) {
-    flavor2Field.style.display = (mode === 'combo') ? '' : 'none';
-}
-
 function populateSelects() {
     [flavor1Select, flavor2Select].forEach(sel => {
         const current = sel.value;
@@ -197,9 +188,52 @@ function populateSelects() {
 }
 
 function updateButtonLabels() {
-    logSliceButton.textContent = `Log 1 Slice ($${config.prices.Slice.toFixed(2)})`;
-    logComboButton.textContent = `Log Combo ($${config.prices.Combo.toFixed(2)})`;
-    logDrinkButton.textContent = `Log Drink ($${config.prices.Drink.toFixed(2)})`;
+    document.getElementById('logButton').textContent =
+        'Log ' + selectedType + ' — $' + config.prices[selectedType].toFixed(2);
+}
+
+function setItemType(type) {
+    selectedType = type;
+
+    document.querySelectorAll('.seg-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.type === type);
+    });
+
+    var flavor1Group  = document.getElementById('flavor1Group');
+    var flavor2Group  = document.getElementById('flavor2Group');
+    var drinkGroup    = document.getElementById('drinkGroup');
+    var flavor1Label  = document.getElementById('flavor1Label');
+    var flavorPairRow = document.getElementById('flavorPairRow');
+
+    if (type === 'Slice') {
+        flavor1Group.style.display  = '';
+        flavor2Group.style.display  = 'none';
+        drinkGroup.style.display    = '';
+        flavor1Label.textContent    = 'Pizza Flavor';
+        flavorPairRow.classList.remove('two-col');
+    } else if (type === 'Combo') {
+        flavor1Group.style.display  = '';
+        flavor2Group.style.display  = '';
+        drinkGroup.style.display    = '';
+        flavor1Label.textContent    = 'Flavor 1';
+        flavorPairRow.classList.add('two-col');
+    } else {
+        flavor1Group.style.display  = 'none';
+        flavor2Group.style.display  = 'none';
+        drinkGroup.style.display    = '';
+    }
+
+    updateButtonLabels();
+}
+
+function handleLog() {
+    if (selectedType === 'Slice') {
+        logSale('Slice', config.prices.Slice, flavor1Select.value);
+    } else if (selectedType === 'Combo') {
+        logSale('Combo', config.prices.Combo, flavor1Select.value, flavor2Select.value, drinkSelect.value);
+    } else {
+        logSale('Drink', config.prices.Drink, '', '', drinkSelect.value);
+    }
 }
 
 function renderSettingsPanel() {
@@ -214,23 +248,6 @@ function renderSettingsPanel() {
     document.getElementById('configDrinkList').innerHTML = config.drinks.map((d, i) =>
         `<div class="config-item"><span>${d}</span><button class="config-remove-btn" data-type="drink" data-index="${i}" aria-label="Remove ${d}">×</button></div>`
     ).join('');
-}
-
-function handleLogSlice() {
-    const flavor1 = flavor1Select.value;
-    logSale('Slice', config.prices.Slice, flavor1);
-}
-
-function handleLogCombo() {
-    const flavor1 = flavor1Select.value;
-    const flavor2 = flavor2Select.value;
-    const drink = drinkSelect.value;
-    logSale('Combo', config.prices.Combo, flavor1, flavor2, drink);
-}
-
-function handleLogDrink() {
-    const drink = drinkSelect.value;
-    logSale('Drink', config.prices.Drink, '', '', drink);
 }
 
 function exportToCSV() {
@@ -329,18 +346,13 @@ async function clearCacheAndReload() {
 }
 
 // --- Event Listeners ---
-logSliceButton.addEventListener('click', handleLogSlice);
-logComboButton.addEventListener('click', handleLogCombo);
-logDrinkButton.addEventListener('click', handleLogDrink);
-logSliceButton.addEventListener('mousedown', () => setMode('slice'));
-logComboButton.addEventListener('mousedown', () => setMode('combo'));
-logDrinkButton.addEventListener('mousedown', () => setMode('drink'));
-logSliceButton.addEventListener('touchstart', () => setMode('slice'), { passive: true });
-logComboButton.addEventListener('touchstart', () => setMode('combo'), { passive: true });
-logDrinkButton.addEventListener('touchstart', () => setMode('drink'), { passive: true });
-logSliceButton.addEventListener('focus', () => setMode('slice'));
-logComboButton.addEventListener('focus', () => setMode('combo'));
-logDrinkButton.addEventListener('focus', () => setMode('drink'));
+document.getElementById('itemTypeControl').addEventListener('click', function(e) {
+    var btn = e.target.closest('.seg-btn');
+    if (btn) setItemType(btn.dataset.type);
+});
+
+document.getElementById('logButton').addEventListener('click', handleLog);
+
 exportCSVButton.addEventListener('click', exportToCSV);
 clearLogsButton.addEventListener('click', clearLogs); // Add listener for clear button
 clearCacheButton.addEventListener('click', clearCacheAndReload); // Add listener for clear cache button
@@ -454,8 +466,7 @@ if ('serviceWorker' in navigator) {
 // --- Initial Setup ---
 // Initial render of the log table on page load
 renderLogTable();
-setMode('slice');
 populateSelects();
-updateButtonLabels();
+setItemType('Slice');
 renderSettingsPanel();
 updateStatus('Application loaded. Previous logs restored.'); // Update initial status

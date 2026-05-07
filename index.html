@@ -28,61 +28,58 @@
     </header>
 
     <main>
-        <div class="order-details">
-            <h2>Order Details</h2>
-            <div id="flavor1Field">
-                <label for="flavor1">Pizza Flavor 1:</label>
-                <select id="flavor1">
-                </select>
+        <div class="order-panel">
+            <div class="seg-control" id="itemTypeControl">
+                <button class="seg-btn active" data-type="Slice">Slice</button>
+                <button class="seg-btn" data-type="Combo">Combo</button>
+                <button class="seg-btn" data-type="Drink">Drink</button>
             </div>
-
-            <div id="flavor2Field">
-                <label for="flavor2">Pizza Flavor 2 (for Combo):</label>
-                <select id="flavor2">
-                </select>
+            <div class="order-fields">
+                <div class="flavor-pair-row" id="flavorPairRow">
+                    <div class="field-group" id="flavor1Group">
+                        <label for="flavor1" id="flavor1Label">Pizza Flavor</label>
+                        <select id="flavor1"></select>
+                    </div>
+                    <div class="field-group" id="flavor2Group" style="display:none">
+                        <label for="flavor2">Flavor 2</label>
+                        <select id="flavor2"></select>
+                    </div>
+                </div>
+                <div class="field-group" id="drinkGroup">
+                    <label for="drink">Drink</label>
+                    <select id="drink"></select>
+                </div>
             </div>
-
-            <div id="drinkField">
-                <label for="drink">Drink (for Combo/Drink):</label>
-                <select id="drink">
-                </select>
+            <button id="logButton" class="log-btn">Log Slice &#8212; $2.50</button>
+            <div class="compact-summary">
+                <div class="compact-stat">
+                    <span class="compact-stat-label">Slices</span>
+                    <span class="compact-stat-value" id="summarySlices">0</span>
+                </div>
+                <div class="compact-stat">
+                    <span class="compact-stat-label">Combos</span>
+                    <span class="compact-stat-value" id="summaryCombos">0</span>
+                </div>
+                <div class="compact-stat">
+                    <span class="compact-stat-label">Drinks</span>
+                    <span class="compact-stat-value" id="summaryDrinks">0</span>
+                </div>
+                <div class="compact-stat">
+                    <span class="compact-stat-label">Total</span>
+                    <span class="compact-stat-value" id="summaryTotal">0</span>
+                </div>
             </div>
-        </div>
-
-        <div class="actions">
-            <button id="logSlice">Log 1 Slice ($2.50)</button>
-            <button id="logCombo">Log Combo ($5.00)</button>
-            <button id="logDrink">Log Drink ($1.00)</button>
+            <div id="undoToast" class="undo-toast" style="display:none">
+                <span id="undoToastText" class="undo-toast-text"></span>
+                <button id="undoButton" class="undo-btn">Undo</button>
+                <div class="undo-progress">
+                    <div id="undoProgressBar" class="undo-progress-bar"></div>
+                </div>
+            </div>
         </div>
 
         <div class="status">
             <p id="statusMessage">Ready.</p>
-        </div>
-
-        <div class="summary" id="summaryCard">
-            <h2>Session Summary</h2>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <span class="summary-label">Total Revenue</span>
-                    <span class="summary-value" id="summaryRevenue">$0.00</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Slices</span>
-                    <span class="summary-value" id="summarySlices">0</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Combos</span>
-                    <span class="summary-value" id="summaryCombos">0</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Drinks</span>
-                    <span class="summary-value" id="summaryDrinks">0</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Total Sales</span>
-                    <span class="summary-value" id="summaryTotal">0</span>
-                </div>
-            </div>
         </div>
 
         <div class="export">

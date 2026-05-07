@@ -79,20 +79,6 @@ main {
 }
 
 /* ── Cards ── */
-.order-details {
-    background-color: var(--color-surface);
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    border: 4px solid var(--color-primary);
-}
-
-.order-details h2 {
-    margin-top: 0;
-    color: var(--color-text);
-}
-
 .export {
     background-color: var(--color-surface);
     padding: 12px 15px;
@@ -112,6 +98,213 @@ main {
 .log-display h2 {
     margin-top: 0;
     color: var(--color-text);
+}
+
+/* ── Order panel ── */
+.order-panel {
+    background-color: var(--color-surface);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border: 4px solid var(--color-primary);
+}
+
+.seg-control {
+    display: flex;
+    border: 2px solid var(--color-primary);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.seg-btn {
+    flex: 1;
+    padding: 10px 8px;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border: none;
+    border-right: 1.5px solid var(--color-border);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+    touch-action: manipulation;
+    min-height: 44px;
+}
+
+.seg-btn:last-child { border-right: none; }
+
+.seg-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.seg-btn:hover:not(.active) {
+    background: var(--color-bg);
+}
+
+.order-fields {
+    margin-bottom: 10px;
+}
+
+.flavor-pair-row {
+    display: block;
+}
+
+.flavor-pair-row.two-col {
+    display: flex;
+    gap: 10px;
+}
+
+.flavor-pair-row.two-col .field-group {
+    flex: 1;
+}
+
+.field-group {
+    margin-bottom: 10px;
+}
+
+.field-group label {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: var(--color-label);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.field-group select {
+    width: 100%;
+    padding: 10px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fffdf8;
+    color: var(--color-text);
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.field-group select:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-color: var(--color-primary);
+}
+
+.log-btn {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 16px 10px;
+    border-radius: 6px;
+    min-height: 56px;
+    box-shadow: 0 3px 0 #9e2507;
+    letter-spacing: 0.02em;
+    touch-action: manipulation;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.log-btn:hover { background-color: var(--color-primary-hover); }
+
+.log-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #9e2507;
+}
+
+/* ── Compact summary strip ── */
+.compact-summary {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.compact-stat {
+    flex: 1;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 7px 4px;
+    text-align: center;
+}
+
+.compact-stat-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--color-label);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+}
+
+.compact-stat-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* ── Undo toast ── */
+.undo-toast {
+    align-items: center;
+    gap: 10px;
+    background: var(--color-secondary);
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 14px 13px;
+    margin-top: 10px;
+    position: relative;
+    flex-wrap: nowrap;
+}
+
+.undo-toast-text {
+    flex: 1;
+    font-size: 0.88rem;
+    line-height: 1.3;
+}
+
+.undo-btn {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    min-height: 36px;
+    font-family: inherit;
+    touch-action: manipulation;
+}
+
+.undo-btn:hover { background: var(--color-primary-hover); }
+
+.undo-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.undo-progress-bar {
+    height: 100%;
+    background: rgba(255,255,255,0.6);
+    border-radius: 0 0 8px 8px;
+    width: 100%;
+}
+
+@keyframes undoCountdown {
+    from { width: 100%; }
+    to   { width: 0%; }
 }
 
 /* ── Status (inline, no card) ── */
@@ -166,36 +359,6 @@ button {
     transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 
-/* ── Tier 1: Primary action buttons ── */
-.actions {
-    display: flex;
-    gap: 10px;
-    padding: 0 0 15px 0;
-}
-
-.actions button {
-    flex: 1;
-    background-color: var(--color-primary);
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 1.05rem;
-    padding: 16px 10px;
-    border-radius: 6px;
-    min-height: 56px;
-    box-shadow: 0 3px 0 #9e2507;
-    letter-spacing: 0.02em;
-    touch-action: manipulation;
-}
-
-.actions button:hover {
-    background-color: var(--color-primary-hover);
-}
-
-.actions button:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #9e2507;
-}
-
 /* ── Tier 2: Export button ── */
 .export button#exportCSV {
     background-color: var(--color-secondary);
@@ -247,58 +410,6 @@ button.danger-btn:hover {
 
 .advanced-section button {
     width: 100%;
-}
-
-/* ── Summary card ── */
-.summary {
-    background-color: var(--color-surface);
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-
-.summary h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: var(--color-text);
-    font-size: 1.1rem;
-}
-
-.summary-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.summary-item {
-    flex: 1 1 80px;
-    background-color: var(--color-bg);
-    border-radius: 6px;
-    padding: 10px 12px;
-    text-align: center;
-    border: 1px solid var(--color-border);
-}
-
-.summary-label {
-    display: block;
-    font-size: 0.78em;
-    color: var(--color-label);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
-}
-
-.summary-value {
-    display: block;
-    font-size: 1.4em;
-    font-weight: 700;
-    color: var(--color-text);
-}
-
-#summaryRevenue {
-    color: #2a7a2a;
-    font-size: 1.7em;
 }
 
 /* ── Table ── */
@@ -429,17 +540,6 @@ button.danger-btn:hover {
     #salesLogTable button.delete-btn {
         width: auto;
         margin: 5px 0;
-    }
-}
-
-/* ── Stack primary buttons on very small screens ── */
-@media screen and (max-width: 400px) {
-    .actions {
-        flex-direction: column;
-    }
-
-    .actions button {
-        width: 100%;
     }
 }
 
