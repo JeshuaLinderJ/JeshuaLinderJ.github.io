@@ -1,5 +1,5 @@
 {
-  "name": "Pizza Logger",
+  "name": "LOXODON Pizza Logger",
   "short_name": "PizzaLog",
   "description": "A simple app to log pizza stand sales.",
   "start_url": "/index.html",
@@ -8,9 +8,16 @@
   "theme_color": "#c0392b",
   "icons": [
     {
+      "src": "images/Loxodon-1_Logo.png",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "images/Loxodon-1_Logo.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

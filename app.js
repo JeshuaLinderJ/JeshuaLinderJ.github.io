@@ -1,5 +1,39 @@
 'use strict';
 
+// --- Config ---
+const DEFAULT_CONFIG = {
+    prices: { Slice: 2.50, Combo: 5.00, Drink: 1.00 },
+    flavors: ['Pepperoni', 'Cheese', 'Meat Lovers', 'Other'],
+    drinks: ['Coca Cola', 'Sprite', 'Water', 'Other']
+};
+
+let config = (function () {
+    try {
+        const saved = localStorage.getItem('pizzaConfig');
+        if (saved) {
+            const p = JSON.parse(saved);
+            return {
+                prices:  { ...DEFAULT_CONFIG.prices,  ...(p.prices  || {}) },
+                flavors: Array.isArray(p.flavors) ? p.flavors : [...DEFAULT_CONFIG.flavors],
+                drinks:  Array.isArray(p.drinks)  ? p.drinks  : [...DEFAULT_CONFIG.drinks]
+            };
+        }
+    } catch (e) {}
+    return {
+        prices:  { ...DEFAULT_CONFIG.prices },
+        flavors: [...DEFAULT_CONFIG.flavors],
+        drinks:  [...DEFAULT_CONFIG.drinks]
+    };
+})();
+
+function saveConfig() {
+    try {
+        localStorage.setItem('pizzaConfig', JSON.stringify(config));
+    } catch (e) {
+        updateStatus('Warning: Could not save settings — storage may be full.');
+    }
+}
+
 // --- DOM Elements ---
 const flavor1Select = document.getElementById('flavor1');
 const flavor2Select = document.getElementById('flavor2');
@@ -23,6 +57,8 @@ const summaryCombos  = document.getElementById('summaryCombos');
 const summaryDrinks  = document.getElementById('summaryDrinks');
 const summaryTotal   = document.getElementById('summaryTotal');
 
+let _logPending = false;
+
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
 let salesData = JSON.parse(localStorage.getItem('pizzaSales')) || [];
@@ -35,18 +71,22 @@ function updateStatus(message) {
 
 function saveSalesData() {
     // Save the current salesData array to the browser's local storage
-    localStorage.setItem('pizzaSales', JSON.stringify(salesData));
+    try {
+        localStorage.setItem('pizzaSales', JSON.stringify(salesData));
+    } catch (e) {
+        updateStatus('Warning: Could not save — storage may be full.');
+    }
 }
 
 function updateSummary() {
     let revenue = 0, slices = 0, combos = 0, drinks = 0;
     salesData.forEach(sale => {
-        revenue += sale.Price;
+        revenue += Math.round(sale.Price * 100);
         if (sale.Item === 'Slice') slices++;
         else if (sale.Item === 'Combo') combos++;
         else if (sale.Item === 'Drink') drinks++;
     });
-    summaryRevenue.textContent = '$' + revenue.toFixed(2);
+    summaryRevenue.textContent = '$' + (revenue / 100).toFixed(2);
     summarySlices.textContent  = slices;
     summaryCombos.textContent  = combos;
     summaryDrinks.textContent  = drinks;
@@ -120,6 +160,9 @@ function deleteSale(index) {
 }
 
 function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
+    if (_logPending) return;
+    _logPending = true;
+    setTimeout(() => { _logPending = false; }, 400);
     const timestamp = new Date().toISOString(); // Use ISO format for better compatibility
     salesData.push({
         Timestamp: timestamp,
@@ -139,26 +182,55 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
 }
 
 function setMode(mode) {
-    flavor1Field.style.display = (mode === 'slice' || mode === 'combo') ? '' : 'none';
     flavor2Field.style.display = (mode === 'combo') ? '' : 'none';
-    drinkField.style.display   = (mode === 'combo' || mode === 'drink') ? '' : 'none';
+}
+
+function populateSelects() {
+    [flavor1Select, flavor2Select].forEach(sel => {
+        const current = sel.value;
+        sel.innerHTML = config.flavors.map(f => `<option>${f}</option>`).join('');
+        if (config.flavors.includes(current)) sel.value = current;
+    });
+    const currentDrink = drinkSelect.value;
+    drinkSelect.innerHTML = config.drinks.map(d => `<option>${d}</option>`).join('');
+    if (config.drinks.includes(currentDrink)) drinkSelect.value = currentDrink;
+}
+
+function updateButtonLabels() {
+    logSliceButton.textContent = `Log 1 Slice ($${config.prices.Slice.toFixed(2)})`;
+    logComboButton.textContent = `Log Combo ($${config.prices.Combo.toFixed(2)})`;
+    logDrinkButton.textContent = `Log Drink ($${config.prices.Drink.toFixed(2)})`;
+}
+
+function renderSettingsPanel() {
+    document.getElementById('priceSlice').value = config.prices.Slice;
+    document.getElementById('priceCombo').value = config.prices.Combo;
+    document.getElementById('priceDrink').value = config.prices.Drink;
+
+    document.getElementById('configFlavorList').innerHTML = config.flavors.map((f, i) =>
+        `<div class="config-item"><span>${f}</span><button class="config-remove-btn" data-type="flavor" data-index="${i}" aria-label="Remove ${f}">×</button></div>`
+    ).join('');
+
+    document.getElementById('configDrinkList').innerHTML = config.drinks.map((d, i) =>
+        `<div class="config-item"><span>${d}</span><button class="config-remove-btn" data-type="drink" data-index="${i}" aria-label="Remove ${d}">×</button></div>`
+    ).join('');
 }
 
 function handleLogSlice() {
     const flavor1 = flavor1Select.value;
-    logSale('Slice', 2.50, flavor1);
+    logSale('Slice', config.prices.Slice, flavor1);
 }
 
 function handleLogCombo() {
     const flavor1 = flavor1Select.value;
     const flavor2 = flavor2Select.value;
     const drink = drinkSelect.value;
-    logSale('Combo', 5.00, flavor1, flavor2, drink);
+    logSale('Combo', config.prices.Combo, flavor1, flavor2, drink);
 }
 
 function handleLogDrink() {
     const drink = drinkSelect.value;
-    logSale('Drink', 1.00, '', '', drink);
+    logSale('Drink', config.prices.Drink, '', '', drink);
 }
 
 function exportToCSV() {
@@ -180,6 +252,9 @@ function exportToCSV() {
             // Format timestamp for CSV export (using ISO string is often best for data)
             if (header === 'Timestamp') {
                 value = new Date(value).toISOString();
+            }
+            if (header === 'Price') {
+                value = Number(value).toFixed(2);
             }
             // Escape double quotes by doubling them
             value = String(value).replace(/"/g, '""');
@@ -281,6 +356,85 @@ logTableBody.addEventListener('click', (event) => {
     }
 });
 
+document.getElementById('saveSettings').addEventListener('click', () => {
+    const ps = parseFloat(document.getElementById('priceSlice').value);
+    const pc = parseFloat(document.getElementById('priceCombo').value);
+    const pd = parseFloat(document.getElementById('priceDrink').value);
+    if ([ps, pc, pd].some(v => isNaN(v) || v < 0)) {
+        updateStatus('Invalid prices — enter positive numbers.');
+        return;
+    }
+    config.prices = { Slice: ps, Combo: pc, Drink: pd };
+    saveConfig();
+    updateButtonLabels();
+    updateStatus('Settings saved.');
+});
+
+document.getElementById('resetSettings').addEventListener('click', () => {
+    if (confirm('Reset all settings to factory defaults?')) {
+        config = {
+            prices:  { ...DEFAULT_CONFIG.prices },
+            flavors: [...DEFAULT_CONFIG.flavors],
+            drinks:  [...DEFAULT_CONFIG.drinks]
+        };
+        saveConfig();
+        populateSelects();
+        updateButtonLabels();
+        renderSettingsPanel();
+        updateStatus('Settings reset to defaults.');
+    }
+});
+
+document.getElementById('addFlavor').addEventListener('click', () => {
+    const input = document.getElementById('newFlavor');
+    const val = input.value.trim();
+    if (!val) return;
+    config.flavors.push(val);
+    input.value = '';
+    saveConfig();
+    populateSelects();
+    renderSettingsPanel();
+});
+
+document.getElementById('newFlavor').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('addFlavor').click();
+});
+
+document.getElementById('addDrink').addEventListener('click', () => {
+    const input = document.getElementById('newDrink');
+    const val = input.value.trim();
+    if (!val) return;
+    config.drinks.push(val);
+    input.value = '';
+    saveConfig();
+    populateSelects();
+    renderSettingsPanel();
+});
+
+document.getElementById('newDrink').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('addDrink').click();
+});
+
+document.getElementById('configFlavorList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.config-remove-btn');
+    if (!btn || btn.dataset.type !== 'flavor') return;
+    if (config.flavors.length <= 1) { updateStatus('Must keep at least one flavor.'); return; }
+    config.flavors.splice(parseInt(btn.dataset.index, 10), 1);
+    saveConfig();
+    populateSelects();
+    renderSettingsPanel();
+});
+
+document.getElementById('configDrinkList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.config-remove-btn');
+    if (!btn || btn.dataset.type !== 'drink') return;
+    if (config.drinks.length <= 1) { updateStatus('Must keep at least one drink.'); return; }
+    config.drinks.splice(parseInt(btn.dataset.index, 10), 1);
+    saveConfig();
+    populateSelects();
+    renderSettingsPanel();
+});
+
 // --- PWA Service Worker Registration (Basic) ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -300,4 +454,8 @@ if ('serviceWorker' in navigator) {
 // --- Initial Setup ---
 // Initial render of the log table on page load
 renderLogTable();
+setMode('slice');
+populateSelects();
+updateButtonLabels();
+renderSettingsPanel();
 updateStatus('Application loaded. Previous logs restored.'); // Update initial status

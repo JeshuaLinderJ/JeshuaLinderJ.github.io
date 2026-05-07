@@ -11,3 +11,6 @@ build/
 
 # Ignore environment files
 .env
+
+# Ignore brainstorming session files
+.superpowers/

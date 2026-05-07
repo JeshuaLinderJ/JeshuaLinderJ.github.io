@@ -155,6 +155,7 @@ button {
     min-height: 56px;
     box-shadow: 0 3px 0 #9e2507;
     letter-spacing: 0.02em;
+    touch-action: manipulation;
 }
 
 .actions button:hover {
@@ -412,3 +413,152 @@ button.danger-btn:hover {
         width: 100%;
     }
 }
+
+/* ── Settings panel ── */
+.settings-section {
+    background-color: var(--color-surface);
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+.settings-section > summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-secondary);
+    user-select: none;
+    padding: 2px 0;
+    list-style: none;
+}
+
+.settings-section > summary::-webkit-details-marker { display: none; }
+
+.settings-section > summary::before { content: '▶  '; font-size: 0.7em; color: var(--color-label); }
+.settings-section[open] > summary::before { content: '▼  '; }
+
+.settings-content h3 {
+    color: var(--color-label);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 14px 0 6px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 3px;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.settings-row label {
+    min-width: 75px;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-label);
+}
+
+.settings-row input[type="number"] {
+    width: 90px;
+    padding: 6px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fffdf8;
+    color: var(--color-text);
+    box-sizing: border-box;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.settings-actions #saveSettings {
+    background-color: var(--color-secondary);
+    color: #fff;
+    padding: 8px 16px;
+    min-height: 40px;
+    flex: 1;
+}
+
+.settings-actions #saveSettings:hover { background-color: var(--color-secondary-hover); }
+
+.settings-actions .danger-btn {
+    flex: 1;
+    width: auto;
+    margin: 0;
+    font-size: 0.85rem;
+    min-height: 40px;
+    padding: 8px 12px;
+}
+
+.config-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+    min-height: 32px;
+}
+
+.config-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 4px 10px 4px 12px;
+    font-size: 0.88rem;
+}
+
+.config-remove-btn {
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0;
+    line-height: 1;
+    min-height: unset;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.config-remove-btn:hover { color: var(--color-danger-hover); background-color: rgba(0,0,0,0.06); }
+
+.settings-add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.settings-add-row input[type="text"] {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #fffdf8;
+    color: var(--color-text);
+    box-sizing: border-box;
+}
+
+.settings-add-row button {
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 7px 16px;
+    min-height: 36px;
+    font-size: 0.9rem;
+}
+
+.settings-add-row button:hover { background-color: var(--color-primary-hover); }

@@ -1,12 +1,14 @@
 /* Basic Service Worker for Caching */
 
-const CACHE_NAME = 'pizza-logger-cache-v2';
+const CACHE_NAME = 'pizza-logger-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
   '/manifest.json',
+  '/images/Loxodon-1_Logo.png',
+  '/images/Loxodon-1_Logo.ico',
 ];
 
 // Install event: Cache core assets
