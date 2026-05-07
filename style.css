@@ -188,7 +188,7 @@ button.danger-btn {
     font-size: 0.9rem;
     font-weight: 500;
     padding: 9px 15px;
-    min-height: 40px;
+    min-height: 44px;
     width: 100%;
     margin: 0 0 8px 0;
     display: block;
@@ -333,6 +333,7 @@ button.danger-btn:hover {
 
     button.danger-btn {
         margin-bottom: 0;
+        grid-column: 1 / -1;
     }
 
     .advanced-section {
