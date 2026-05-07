@@ -12,8 +12,16 @@ const statusMessage = document.getElementById('statusMessage');
 // New elements for log display
 const logTableBody = document.getElementById('logTableBody');
 const emptyLogMessage = document.getElementById('emptyLogMessage');
-const clearLogsButton = document.getElementById('clearLogsButton'); // Get clear logs button
-const clearCacheButton = document.getElementById('clearCacheButton'); // Get clear cache button
+const clearLogsButton = document.getElementById('clearLogsButton');
+const clearCacheButton = document.getElementById('clearCacheButton');
+const flavor1Field = document.getElementById('flavor1Field');
+const flavor2Field = document.getElementById('flavor2Field');
+const drinkField   = document.getElementById('drinkField');
+const summaryRevenue = document.getElementById('summaryRevenue');
+const summarySlices  = document.getElementById('summarySlices');
+const summaryCombos  = document.getElementById('summaryCombos');
+const summaryDrinks  = document.getElementById('summaryDrinks');
+const summaryTotal   = document.getElementById('summaryTotal');
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -30,8 +38,23 @@ function saveSalesData() {
     localStorage.setItem('pizzaSales', JSON.stringify(salesData));
 }
 
+function updateSummary() {
+    let revenue = 0, slices = 0, combos = 0, drinks = 0;
+    salesData.forEach(sale => {
+        revenue += sale.Price;
+        if (sale.Item === 'Slice') slices++;
+        else if (sale.Item === 'Combo') combos++;
+        else if (sale.Item === 'Drink') drinks++;
+    });
+    summaryRevenue.textContent = '$' + revenue.toFixed(2);
+    summarySlices.textContent  = slices;
+    summaryCombos.textContent  = combos;
+    summaryDrinks.textContent  = drinks;
+    summaryTotal.textContent   = salesData.length;
+}
+
 function renderLogTable() {
-    // Clear existing table rows
+    updateSummary();
     logTableBody.innerHTML = '';
 
     // Check if there's data
@@ -115,6 +138,12 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
     // drinkSelect.selectedIndex = 0;
 }
 
+function setMode(mode) {
+    flavor1Field.style.display = (mode === 'slice' || mode === 'combo') ? '' : 'none';
+    flavor2Field.style.display = (mode === 'combo') ? '' : 'none';
+    drinkField.style.display   = (mode === 'combo' || mode === 'drink') ? '' : 'none';
+}
+
 function handleLogSlice() {
     const flavor1 = flavor1Select.value;
     logSale('Slice', 2.50, flavor1);
@@ -141,7 +170,7 @@ function exportToCSV() {
 
     const headers = ['Timestamp', 'Item', 'Pizza Flavor 1', 'Pizza Flavor 2', 'Drink', 'Price'];
     // Convert data array to CSV string
-    let csvContent = "data:text/csv;charset=utf-8,";
+    let csvContent = "";
     csvContent += headers.join(",") + "\r\n"; // Add header row
 
     salesData.forEach(row => {
@@ -164,14 +193,16 @@ function exportToCSV() {
     });
 
     // Create a link and trigger download
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     const timestamp = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     link.setAttribute("download", `pizza_sales_${timestamp}.csv`);
     document.body.appendChild(link); // Required for Firefox
 
     link.click(); // Trigger download
+    URL.revokeObjectURL(url);
     document.body.removeChild(link); // Clean up
     updateStatus('Data exported to CSV.');
 }
@@ -212,7 +243,7 @@ async function clearCacheAndReload() {
 
             updateStatus('Cache cleared. Reloading page...');
             // 3. Force reload the page, bypassing browser cache
-            window.location.reload(true);
+            window.location.reload();
 
         } catch (error) {
             console.error('Error clearing cache or unregistering service worker:', error);
@@ -226,6 +257,15 @@ async function clearCacheAndReload() {
 logSliceButton.addEventListener('click', handleLogSlice);
 logComboButton.addEventListener('click', handleLogCombo);
 logDrinkButton.addEventListener('click', handleLogDrink);
+logSliceButton.addEventListener('mousedown', () => setMode('slice'));
+logComboButton.addEventListener('mousedown', () => setMode('combo'));
+logDrinkButton.addEventListener('mousedown', () => setMode('drink'));
+logSliceButton.addEventListener('touchstart', () => setMode('slice'), { passive: true });
+logComboButton.addEventListener('touchstart', () => setMode('combo'), { passive: true });
+logDrinkButton.addEventListener('touchstart', () => setMode('drink'), { passive: true });
+logSliceButton.addEventListener('focus', () => setMode('slice'));
+logComboButton.addEventListener('focus', () => setMode('combo'));
+logDrinkButton.addEventListener('focus', () => setMode('drink'));
 exportCSVButton.addEventListener('click', exportToCSV);
 clearLogsButton.addEventListener('click', clearLogs); // Add listener for clear button
 clearCacheButton.addEventListener('click', clearCacheAndReload); // Add listener for clear cache button

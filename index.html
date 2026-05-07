@@ -2,87 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Logger PWA</title>
+    <meta name="description" content="Pizza Stand Sales Logger — quickly log slices, combos, and drinks at your pizza stand and export sales data to CSV.">
+    <title>Pizza Logger</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ff6347"/> <!-- Tomato color -->
-    <!-- Add to home screen for Safari on iOS -->
+    <meta name="theme-color" content="#c0392b"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pizza Log">
-    <!-- Link to an icon file (replace with your actual icon path) -->
-    <link rel="apple-touch-icon" href="images/icon-192x192.png"> 
+    <link rel="apple-touch-icon" href="images/icon-180.png">
 </head>
 <body>
-    <h1>Pizza Stand Sales Logger</h1>
+    <header class="app-header">
+        <h1>Pizza Stand Sales Logger</h1>
+    </header>
 
-    <div class="order-details">
-        <h2>Order Details</h2>
-        <label for="flavor1">Pizza Flavor 1:</label>
-        <select id="flavor1">
-            <option>Pepperoni</option>
-            <option>Cheese</option>
-            <option>Meat Lovers</option>
-            <option>Other</option>
-        </select>
+    <main>
+        <div class="order-details">
+            <h2>Order Details</h2>
+            <div id="flavor1Field">
+                <label for="flavor1">Pizza Flavor 1:</label>
+                <select id="flavor1">
+                    <option>Pepperoni</option>
+                    <option>Cheese</option>
+                    <option>Meat Lovers</option>
+                    <option>Other</option>
+                </select>
+            </div>
 
-        <label for="flavor2">Pizza Flavor 2 (for Combo):</label>
-        <select id="flavor2">
-            <option>Pepperoni</option>
-            <option>Cheese</option>
-            <option>Meat Lovers</option>
-            <option>Other</option>
-        </select>
+            <div id="flavor2Field">
+                <label for="flavor2">Pizza Flavor 2 (for Combo):</label>
+                <select id="flavor2">
+                    <option>Pepperoni</option>
+                    <option>Cheese</option>
+                    <option>Meat Lovers</option>
+                    <option>Other</option>
+                </select>
+            </div>
 
-        <label for="drink">Drink (for Combo/Drink):</label>
-        <select id="drink">
-            <option>Coca Cola</option>
-            <option>Sprite</option>
-            <option>Water</option>
-            <option>Other</option>
-        </select>
-    </div>
-
-    <div class="actions">
-        <button id="logSlice">Log 1 Slice ($2.50)</button>
-        <button id="logCombo">Log Combo ($5.00)</button>
-        <button id="logDrink">Log Drink ($1.00)</button>
-    </div>
-
-    <div class="export">
-        <button id="exportCSV">Export Data to CSV</button>
-        <button id="clearLogsButton" class="danger-btn">Clear All Logs</button>
-        <button id="clearCacheButton" class="danger-btn">Clear Cache & Reload</button> <!-- Add Clear Cache Button -->
-    </div>
-
-    <div class="status">
-        <p id="statusMessage">Ready.</p>
-    </div>
-
-    <!-- Add Log Table Section -->
-    <div class="log-display">
-        <h2>Sales Log</h2>
-        <div id="logTableContainer">
-            <table id="salesLogTable">
-                <thead>
-                    <tr>
-                        <th>Timestamp</th>
-                        <th>Item</th>
-                        <th>Flavor 1</th>
-                        <th>Flavor 2</th>
-                        <th>Drink</th>
-                        <th>Price</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="logTableBody">
-                    <!-- Log rows will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-            <p id="emptyLogMessage" style="display: none; text-align: center; margin-top: 10px;">No sales logged yet.</p>
+            <div id="drinkField">
+                <label for="drink">Drink (for Combo/Drink):</label>
+                <select id="drink">
+                    <option>Coca Cola</option>
+                    <option>Sprite</option>
+                    <option>Water</option>
+                    <option>Other</option>
+                </select>
+            </div>
         </div>
-    </div>
+
+        <div class="actions">
+            <button id="logSlice">Log 1 Slice ($2.50)</button>
+            <button id="logCombo">Log Combo ($5.00)</button>
+            <button id="logDrink">Log Drink ($1.00)</button>
+        </div>
+
+        <div class="status">
+            <p id="statusMessage">Ready.</p>
+        </div>
+
+        <div class="summary" id="summaryCard">
+            <h2>Session Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Total Revenue</span>
+                    <span class="summary-value" id="summaryRevenue">$0.00</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Slices</span>
+                    <span class="summary-value" id="summarySlices">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Combos</span>
+                    <span class="summary-value" id="summaryCombos">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Drinks</span>
+                    <span class="summary-value" id="summaryDrinks">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Sales</span>
+                    <span class="summary-value" id="summaryTotal">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="export">
+            <button id="exportCSV">Export Data to CSV</button>
+            <button id="clearLogsButton" class="danger-btn">Clear All Logs</button>
+            <details class="advanced-section">
+                <summary>Advanced</summary>
+                <button id="clearCacheButton" class="danger-btn">Clear Cache &amp; Reload</button>
+            </details>
+        </div>
+
+        <div class="log-display">
+            <h2>Sales Log</h2>
+            <div id="logTableContainer">
+                <table id="salesLogTable">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Item</th>
+                            <th>Flavor 1</th>
+                            <th>Flavor 2</th>
+                            <th>Drink</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody">
+                    </tbody>
+                </table>
+                <p id="emptyLogMessage" style="display: none; text-align: center; margin-top: 10px;">No sales logged yet.</p>
+            </div>
+        </div>
+    </main>
 
     <script src="app.js"></script>
 </body>

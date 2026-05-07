@@ -1,90 +1,277 @@
+:root {
+    --color-brand:           #c0392b;
+    --color-primary:         #e8420e;
+    --color-primary-hover:   #bf3409;
+    --color-bg:              #fdf6ec;
+    --color-surface:         #ffffff;
+    --color-border:          #e8d5b7;
+    --color-secondary:       #5c4033;
+    --color-secondary-hover: #3e2a22;
+    --color-danger:          #7b1d1d;
+    --color-danger-hover:    #550f0f;
+    --color-delete:          #9e2a2b;
+    --color-delete-hover:    #6b1414;
+    --color-text:            #2b1a0e;
+    --color-label:           #5c3d1e;
+    --color-status:          #5c3d1e;
+    --color-table-head:      #f5e9d5;
+    --color-table-stripe:    #fdf0de;
+}
+
 body {
-    font-family: sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
 }
 
-h1 {
-    color: #333;
-    text-align: center;
+/* ── Header ── */
+.app-header {
+    background-color: var(--color-brand);
+    padding: calc(18px + env(safe-area-inset-top)) 20px 14px;
+    border-bottom: 4px solid #8e1b0e;
+    margin-bottom: 20px;
 }
 
-.order-details, .actions, .export, .status {
-    background-color: #fff;
+.app-header h1 {
+    font-family: 'Oswald', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    color: #ffffff;
+    text-align: left;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* ── Main content padding ── */
+main {
+    padding: 0 20px 20px;
+}
+
+/* ── Cards ── */
+.order-details {
+    background-color: var(--color-surface);
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border: 4px solid var(--color-primary);
 }
 
+.order-details h2 {
+    margin-top: 0;
+    color: var(--color-text);
+}
+
+.export {
+    background-color: var(--color-surface);
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+.log-display {
+    background-color: var(--color-surface);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.log-display h2 {
+    margin-top: 0;
+    color: var(--color-text);
+}
+
+/* ── Status (inline, no card) ── */
+.status {
+    border-left: 3px solid var(--color-border);
+    padding: 4px 0 10px 10px;
+    margin-bottom: 10px;
+}
+
+.status p {
+    color: var(--color-status);
+    font-style: italic;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* ── Form controls ── */
 label {
     display: block;
     margin-top: 10px;
     margin-bottom: 5px;
-    color: #444444;
+    color: var(--color-label);
+    font-weight: 600;
 }
 
 select {
     width: 100%;
-    padding: 8px;
+    padding: 10px 8px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
-    box-sizing: border-box; /* Prevents padding from adding to width */
+    box-sizing: border-box;
+    background-color: #fffdf8;
+    color: var(--color-text);
+    font-size: 1rem;
 }
 
+select:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-color: var(--color-primary);
+}
+
+/* ── Base button reset ── */
 button {
-    background-color: #4b60a8;
-    color: white;
     border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.2s ease;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 
-button:hover {
-    background-color: #977bbb;
-    
-}
-
-/* Style for potentially destructive buttons */
-button.danger-btn {
-    background-color: #dc3545; /* Red */
-}
-
-button.danger-btn:hover {
-    background-color: #c82333; /* Darker Red */
+/* ── Tier 1: Primary action buttons ── */
+.actions {
+    display: flex;
+    gap: 10px;
+    padding: 0 0 15px 0;
 }
 
 .actions button {
-    flex-grow: 1; /* Make buttons share space */
+    flex: 1;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 16px 10px;
+    border-radius: 6px;
+    min-height: 56px;
+    box-shadow: 0 3px 0 #9e2507;
+    letter-spacing: 0.02em;
 }
 
-.actions {
-    display: flex;
-    justify-content: space-around;
+.actions button:hover {
+    background-color: var(--color-primary-hover);
 }
 
-.export button {
+.actions button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #9e2507;
+}
+
+/* ── Tier 2: Export button ── */
+.export button#exportCSV {
+    background-color: var(--color-secondary);
+    color: #ffffff;
+    padding: 10px 15px;
+    min-height: 44px;
+    width: 100%;
+    margin: 0 0 8px 0;
+    display: block;
+}
+
+.export button#exportCSV:hover {
+    background-color: var(--color-secondary-hover);
+}
+
+/* ── Tier 3: Danger buttons ── */
+button.danger-btn {
+    background-color: var(--color-danger);
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 9px 15px;
+    min-height: 40px;
+    width: 100%;
+    margin: 0 0 8px 0;
+    display: block;
+}
+
+button.danger-btn:hover {
+    background-color: var(--color-danger-hover);
+}
+
+/* ── Advanced (Clear Cache) collapse ── */
+.advanced-section {
+    margin-top: 4px;
+}
+
+.advanced-section summary {
+    cursor: pointer;
+    font-size: 0.85em;
+    color: #666;
+    user-select: none;
+    padding: 4px 0;
+}
+
+.advanced-section[open] summary {
+    margin-bottom: 6px;
+}
+
+.advanced-section button {
     width: 100%;
 }
 
-.status p {
-    color: #333;
-    font-style: italic;
-}
-
-.log-display {
-    background-color: #fff;
+/* ── Summary card ── */
+.summary {
+    background-color: var(--color-surface);
     padding: 15px;
-    margin-top: 15px;
+    margin-bottom: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
+.summary h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--color-text);
+    font-size: 1.1rem;
+}
+
+.summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.summary-item {
+    flex: 1 1 80px;
+    background-color: var(--color-bg);
+    border-radius: 6px;
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.summary-label {
+    display: block;
+    font-size: 0.78em;
+    color: var(--color-label);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.summary-value {
+    display: block;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+#summaryRevenue {
+    color: #2a7a2a;
+    font-size: 1.7em;
+}
+
+/* ── Table ── */
 #salesLogTable {
     width: 100%;
     border-collapse: collapse;
@@ -92,47 +279,70 @@ button.danger-btn:hover {
 }
 
 #salesLogTable th, #salesLogTable td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     padding: 8px;
     text-align: left;
 }
 
 #salesLogTable th {
-    background-color: #f2f2f2;
-    color: #333;
+    background-color: var(--color-table-head);
+    color: var(--color-text);
 }
 
 #salesLogTable tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: var(--color-table-stripe);
 }
 
 #salesLogTable tr:hover {
-    background-color: #f1f1f1;
+    background-color: #fce8d0;
 }
 
 #salesLogTable button.delete-btn {
-    background-color: #ca8289; /* Red */
+    background-color: var(--color-delete);
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.8rem;
+    min-height: 44px;
 }
 
 #salesLogTable button.delete-btn:hover {
-    background-color: #87000e;
+    background-color: var(--color-delete-hover);
 }
 
 #emptyLogMessage {
-    color: #777;
+    color: #666;
     font-style: italic;
 }
 
-/* Responsive Table Styles for Mobile */
+/* ── Export grid on wider screens ── */
+@media screen and (min-width: 480px) {
+    .export {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        align-items: start;
+    }
+
+    .export button#exportCSV {
+        grid-column: 1 / -1;
+        margin-bottom: 0;
+    }
+
+    button.danger-btn {
+        margin-bottom: 0;
+    }
+
+    .advanced-section {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ── Responsive table ── */
 @media screen and (max-width: 600px) {
     #salesLogTable thead {
-        /* Hide table headers on small screens */
         border: none;
         clip: rect(0 0 0 0);
         height: 1px;
@@ -144,52 +354,60 @@ button.danger-btn:hover {
     }
 
     #salesLogTable tr {
-        /* Make rows behave like cards */
         display: block;
         margin-bottom: .625em;
-        border: 1px solid #ddd;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     #salesLogTable td {
-        /* Make cells stack vertically */
         display: block;
-        text-align: right; /* Align data to the right */
+        text-align: right;
         font-size: .9em;
-        border-bottom: 1px dotted #ccc;
-        padding-left: 50%; /* Make space for the label */
-        position: relative; /* Needed for pseudo-element positioning */
+        border-bottom: 1px dotted var(--color-border);
+        padding-left: 50%;
+        position: relative;
     }
 
     #salesLogTable td::before {
-        /* Add the header label before the cell data */
         content: attr(data-label);
         position: absolute;
-        left: 10px; /* Position label on the left */
-        width: 45%; /* Control label width */
+        left: 10px;
+        width: 45%;
         padding-right: 10px;
         white-space: nowrap;
         text-align: left;
         font-weight: bold;
-        color: #555;
+        color: var(--color-label);
     }
 
     #salesLogTable td:last-child {
-        border-bottom: 0; /* Remove border from last cell in the stack */
+        border-bottom: 0;
     }
 
-    /* Adjust delete button alignment in stacked view */
     #salesLogTable td[data-label="Action"] {
-        text-align: center; /* Center the delete button */
-        padding-left: 10px; /* Reset padding for action cell */
-    }
-    #salesLogTable td[data-label="Action"]::before {
-         display: none; /* Hide label for action cell if not needed */
-    }
-    #salesLogTable button.delete-btn {
-        width: auto; /* Allow button to size naturally */
-        margin: 5px 0; /* Add some margin */
+        text-align: center;
+        padding-left: 10px;
     }
 
+    #salesLogTable td[data-label="Action"]::before {
+        display: none;
+    }
+
+    #salesLogTable button.delete-btn {
+        width: auto;
+        margin: 5px 0;
+    }
+}
+
+/* ── Stack primary buttons on very small screens ── */
+@media screen and (max-width: 400px) {
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+    }
 }

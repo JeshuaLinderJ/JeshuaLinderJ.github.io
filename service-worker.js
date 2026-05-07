@@ -1,13 +1,13 @@
 /* Basic Service Worker for Caching */
 
-const CACHE_NAME = 'pizza-logger-cache-v1';
+const CACHE_NAME = 'pizza-logger-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
-  '/manifest.json'
-  // Add paths to icons if you have them, e.g., '/images/icon-192x192.png'
+  '/manifest.json',
+  '/images/icon.svg'
 ];
 
 // Install event: Cache core assets
@@ -19,6 +19,7 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  self.skipWaiting();
 });
 
 // Fetch event: Serve cached assets if available, otherwise fetch from network
@@ -26,18 +27,16 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
-        // Not in cache - fetch from network
         return fetch(event.request);
       }
     )
   );
 });
 
-// Activate event: Clean up old caches (optional)
+// Activate event: Clean up old caches
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -51,4 +50,5 @@ self.addEventListener('activate', event => {
       );
     })
   );
+  self.clients.claim();
 });
