@@ -658,13 +658,13 @@ button.danger-btn:hover {
     min-height: unset;
     border-radius: 50%;
     padding: 13px;
-    margin: -13px -9px;
+    margin: -13px -4px -13px -5px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.config-remove-btn:hover { color: var(--color-danger-hover); background-color: rgba(0,0,0,0.06); }
+.config-remove-btn:hover { color: var(--color-danger-hover); }
 
 .settings-add-row {
     display: flex;
