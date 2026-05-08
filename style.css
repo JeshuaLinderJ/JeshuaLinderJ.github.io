@@ -654,12 +654,11 @@ button.danger-btn:hover {
     cursor: pointer;
     font-size: 1.1rem;
     font-weight: 700;
-    padding: 0;
     line-height: 1;
     min-height: unset;
     border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    padding: 13px;
+    margin: -13px -9px;
     display: flex;
     align-items: center;
     justify-content: center;
