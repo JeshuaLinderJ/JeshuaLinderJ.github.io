@@ -35,9 +35,14 @@ function saveConfig() {
 }
 
 // --- DOM Elements ---
-const flavor1Select = document.getElementById('flavor1');
-const flavor2Select = document.getElementById('flavor2');
-const drinkSelect = document.getElementById('drink');
+const flavor1Select  = document.getElementById('flavor1');
+const flavor2Select  = document.getElementById('flavor2');
+const drinkSelect    = document.getElementById('drink');
+const flavor1Group   = document.getElementById('flavor1Group');
+const flavor2Group   = document.getElementById('flavor2Group');
+const drinkGroup     = document.getElementById('drinkGroup');
+const flavor1Label   = document.getElementById('flavor1Label');
+const flavorPairRow  = document.getElementById('flavorPairRow');
 const exportCSVButton = document.getElementById('exportCSV');
 const statusMessage = document.getElementById('statusMessage');
 // New elements for log display
@@ -198,12 +203,6 @@ function setItemType(type) {
     document.querySelectorAll('.seg-btn').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.type === type);
     });
-
-    var flavor1Group  = document.getElementById('flavor1Group');
-    var flavor2Group  = document.getElementById('flavor2Group');
-    var drinkGroup    = document.getElementById('drinkGroup');
-    var flavor1Label  = document.getElementById('flavor1Label');
-    var flavorPairRow = document.getElementById('flavorPairRow');
 
     if (type === 'Slice') {
         flavor1Group.style.display  = '';
