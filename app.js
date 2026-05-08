@@ -375,7 +375,7 @@ function renderSettingsPanel() {
         btn.dataset.type = 'customItem';
         btn.dataset.index = i;
         btn.setAttribute('aria-label', 'Remove ' + item.name);
-        btn.textContent = '\xd7';
+        btn.textContent = '×';
         div.appendChild(span);
         div.appendChild(btn);
         return div;
