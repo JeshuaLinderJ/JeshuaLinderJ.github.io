@@ -81,7 +81,7 @@ function animateRevenue(fromCents, toCents) {
         cancelAnimationFrame(_revenueAnimFrame);
         _revenueAnimFrame = null;
     }
-    if (fromCents === toCents) {
+    if (fromCents === toCents || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         headerRevenue.textContent = '$' + (toCents / 100).toFixed(2);
         _displayedRevenueCents = toCents;
         return;
