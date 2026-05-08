@@ -306,7 +306,8 @@ function showUndoToast(sale) {
     let detail = '';
     if (sale.Item === 'Slice')      detail = sale['Pizza Flavor 1'];
     else if (sale.Item === 'Combo') detail = sale['Pizza Flavor 1'] + ' + ' + sale['Pizza Flavor 2'];
-    else                            detail = sale.Drink;
+    else if (sale.Item === 'Drink') detail = sale.Drink;
+    else                            detail = '$' + sale.Price.toFixed(2);
 
     document.getElementById('undoToastText').textContent =
         'Logged ' + sale.Item + ' — ' + detail;
@@ -527,6 +528,13 @@ document.getElementById('itemTypeControl').addEventListener('click', function(e)
 
 document.getElementById('logButton').addEventListener('click', handleLog);
 
+document.getElementById('customItemButtons').addEventListener('click', function(e) {
+    const btn = e.target.closest('.custom-item-btn');
+    if (!btn) return;
+    const item = config.customItems[parseInt(btn.dataset.index, 10)];
+    if (item) logSale(item.name, item.price, '', '', '');
+});
+
 exportCSVButton.addEventListener('click', exportToCSV);
 clearLogsButton.addEventListener('click', clearLogs); // Add listener for clear button
 clearCacheButton.addEventListener('click', clearCacheAndReload); // Add listener for clear cache button
@@ -685,6 +693,8 @@ renderLogTable();
 populateSelects();
 setItemType('Slice');
 renderSettingsPanel();
+renderCustomItemButtons();
+renderCustomSummaryTiles();
 updateStatus('Ready. Previous logs restored.');
 
 // --- PWA Service Worker Registration ---
