@@ -135,17 +135,26 @@ function saveSalesData() {
 
 function updateSummary() {
     let revenue = 0, slices = 0, combos = 0, drinks = 0;
+    const customCounts = {};
+    config.customItems.forEach(function(item) { customCounts[item.name] = 0; });
     salesData.forEach(sale => {
         revenue += Math.round(sale.Price * 100);
         if (sale.Item === 'Slice') slices++;
         else if (sale.Item === 'Combo') combos++;
         else if (sale.Item === 'Drink') drinks++;
+        else if (Object.prototype.hasOwnProperty.call(customCounts, sale.Item)) customCounts[sale.Item]++;
     });
     animateRevenue(_displayedRevenueCents, revenue);
-    summarySlices.textContent  = slices;
-    summaryCombos.textContent  = combos;
-    summaryDrinks.textContent  = drinks;
-    summaryTotal.textContent   = salesData.length;
+    summarySlices.textContent = slices;
+    summaryCombos.textContent = combos;
+    summaryDrinks.textContent = drinks;
+    summaryTotal.textContent  = salesData.length;
+    config.customItems.forEach(function(item) {
+        const el = document.querySelector(
+            '.compact-summary [data-custom="' + CSS.escape(item.name) + '"]'
+        );
+        if (el) el.textContent = customCounts[item.name];
+    });
 }
 
 function renderLogTable() {
