@@ -59,7 +59,7 @@ const summaryTotal   = document.getElementById('summaryTotal');
 let _logPending = false;
 let selectedType = 'Slice';
 let _undoTimeout      = null;
-let _pendingUndoIndex = null;
+let _pendingUndoTimestamp = null;
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -177,7 +177,7 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
     saveSalesData(); // Save after each log
     renderLogTable(); // Update the table display
     updateStatus(`Logged ${itemType} sale.`);
-    showUndoToast(salesData[salesData.length - 1], salesData.length - 1);
+    showUndoToast(salesData[salesData.length - 1]);
 }
 
 function populateSelects() {
@@ -234,11 +234,11 @@ function handleLog() {
     }
 }
 
-function showUndoToast(sale, index) {
+function showUndoToast(sale) {
     if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
-    _pendingUndoIndex = index;
+    _pendingUndoTimestamp = sale.Timestamp;
 
-    var detail = '';
+    let detail = '';
     if (sale.Item === 'Slice')      detail = sale['Pizza Flavor 1'];
     else if (sale.Item === 'Combo') detail = sale['Pizza Flavor 1'] + ' + ' + sale['Pizza Flavor 2'];
     else                            detail = sale.Drink;
@@ -246,7 +246,7 @@ function showUndoToast(sale, index) {
     document.getElementById('undoToastText').textContent =
         'Logged ' + sale.Item + ' — ' + detail;
 
-    var bar = document.getElementById('undoProgressBar');
+    const bar = document.getElementById('undoProgressBar');
     bar.style.animation = 'none';
     bar.offsetHeight; // force reflow to restart animation
     bar.style.animation = 'undoCountdown 5s linear forwards';
@@ -257,15 +257,17 @@ function showUndoToast(sale, index) {
 
 function dismissUndoToast() {
     if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
-    _pendingUndoIndex = null;
+    _pendingUndoTimestamp = null;
     document.getElementById('undoToast').style.display = 'none';
 }
 
 function handleUndo() {
-    if (_pendingUndoIndex === null) return;
-    var index = _pendingUndoIndex;
+    if (_pendingUndoTimestamp === null) return;
+    const ts = _pendingUndoTimestamp;
     dismissUndoToast();
-    salesData.splice(index, 1);
+    const idx = salesData.findIndex(function(s) { return s.Timestamp === ts; });
+    if (idx === -1) { updateStatus('Nothing to undo.'); return; }
+    salesData.splice(idx, 1);
     saveSalesData();
     renderLogTable();
     updateStatus('Sale undone.');
