@@ -1,6 +1,6 @@
 /* Basic Service Worker for Caching */
 
-const CACHE_NAME = 'pizza-logger-cache-v7';
+const CACHE_NAME = 'pizza-logger-cache-v8';
 const urlsToCache = [
   '/',
   '/index.html',
