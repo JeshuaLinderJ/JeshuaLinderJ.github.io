@@ -560,15 +560,23 @@ resetSettingsButton.addEventListener('click', function() {
         _resetSettingsConfirmTimeout = null;
         resetSettingsButton.textContent = 'Reset to Defaults';
         resetSettingsButton.classList.remove('danger-btn--armed');
+        if (!confirm('Reset prices, flavors, and drinks to defaults?')) return;
+        const keepCustomItems = config.customItems.length > 0
+            ? !confirm('Also delete ' + config.customItems.length + ' custom item(s)?')
+            : true;
         config = {
-            prices:  { ...DEFAULT_CONFIG.prices },
-            flavors: [...DEFAULT_CONFIG.flavors],
-            drinks:  [...DEFAULT_CONFIG.drinks]
+            prices:      { ...DEFAULT_CONFIG.prices },
+            flavors:     [...DEFAULT_CONFIG.flavors],
+            drinks:      [...DEFAULT_CONFIG.drinks],
+            customItems: keepCustomItems ? [...config.customItems] : []
         };
         saveConfig();
         populateSelects();
         updateButtonLabels();
         renderSettingsPanel();
+        renderCustomItemButtons();
+        renderCustomSummaryTiles();
+        renderLogTable();
         updateStatus('Settings reset to defaults.');
     } else {
         resetSettingsButton.textContent = 'Tap again to confirm';
