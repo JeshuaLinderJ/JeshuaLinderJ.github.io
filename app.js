@@ -121,7 +121,7 @@ function updateSummary() {
         else if (sale.Item === 'Combo') combos++;
         else if (sale.Item === 'Drink') drinks++;
     });
-    headerRevenue.textContent = '$' + (revenue / 100).toFixed(2);
+    animateRevenue(_displayedRevenueCents, revenue);
     summarySlices.textContent  = slices;
     summaryCombos.textContent  = combos;
     summaryDrinks.textContent  = drinks;
