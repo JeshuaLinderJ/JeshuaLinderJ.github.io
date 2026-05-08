@@ -4,7 +4,8 @@
 const DEFAULT_CONFIG = {
     prices: { Slice: 2.50, Combo: 5.00, Drink: 1.00 },
     flavors: ['Pepperoni', 'Cheese', 'Meat Lovers', 'Other'],
-    drinks: ['Coca Cola', 'Sprite', 'Water', 'Other']
+    drinks: ['Coca Cola', 'Sprite', 'Water', 'Other'],
+    customItems: []
 };
 
 let config = (function () {
@@ -13,16 +14,18 @@ let config = (function () {
         if (saved) {
             const p = JSON.parse(saved);
             return {
-                prices:  { ...DEFAULT_CONFIG.prices,  ...(p.prices  || {}) },
-                flavors: Array.isArray(p.flavors) ? p.flavors : [...DEFAULT_CONFIG.flavors],
-                drinks:  Array.isArray(p.drinks)  ? p.drinks  : [...DEFAULT_CONFIG.drinks]
+                prices:      { ...DEFAULT_CONFIG.prices,  ...(p.prices  || {}) },
+                flavors:     Array.isArray(p.flavors) ? p.flavors : [...DEFAULT_CONFIG.flavors],
+                drinks:      Array.isArray(p.drinks)  ? p.drinks  : [...DEFAULT_CONFIG.drinks],
+                customItems: Array.isArray(p.customItems) ? p.customItems : []
             };
         }
     } catch (e) {}
     return {
-        prices:  { ...DEFAULT_CONFIG.prices },
-        flavors: [...DEFAULT_CONFIG.flavors],
-        drinks:  [...DEFAULT_CONFIG.drinks]
+        prices:      { ...DEFAULT_CONFIG.prices },
+        flavors:     [...DEFAULT_CONFIG.flavors],
+        drinks:      [...DEFAULT_CONFIG.drinks],
+        customItems: []
     };
 })();
 
@@ -32,6 +35,10 @@ function saveConfig() {
     } catch (e) {
         updateStatus('Warning: Could not save settings — storage may be full.');
     }
+}
+
+function sanitizeName(raw) {
+    return raw.trim().replace(/[<>"'&]/g, '').slice(0, 20);
 }
 
 // --- DOM Elements ---
