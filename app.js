@@ -50,6 +50,7 @@ const logTableBody = document.getElementById('logTableBody');
 const emptyLogMessage = document.getElementById('emptyLogMessage');
 const clearLogsButton = document.getElementById('clearLogsButton');
 const clearCacheButton = document.getElementById('clearCacheButton');
+const resetSettingsButton = document.getElementById('resetSettings');
 const headerRevenue  = document.getElementById('headerRevenue');
 const summarySlices  = document.getElementById('summarySlices');
 const summaryCombos  = document.getElementById('summaryCombos');
@@ -60,6 +61,8 @@ let _logPending = false;
 let selectedType = 'Slice';
 let _undoTimeout      = null;
 let _pendingUndoTimestamp = null;
+let _clearLogsConfirmTimeout    = null;
+let _resetSettingsConfirmTimeout = null;
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -338,11 +341,20 @@ function exportToCSV() {
 
 // --- Function to Clear All Logs ---
 function clearLogs() {
-    if (confirm('Are you sure you want to delete ALL log entries? This cannot be undone.')) {
-        salesData = []; // Clear the array
-        localStorage.removeItem('pizzaSales'); // Remove from localStorage
-        renderLogTable(); // Update the table display
+    if (_clearLogsConfirmTimeout) {
+        clearTimeout(_clearLogsConfirmTimeout);
+        _clearLogsConfirmTimeout = null;
+        clearLogsButton.textContent = 'Clear All Logs';
+        salesData = [];
+        localStorage.removeItem('pizzaSales');
+        renderLogTable();
         updateStatus('All log entries cleared.');
+    } else {
+        clearLogsButton.textContent = 'Tap again to confirm';
+        _clearLogsConfirmTimeout = setTimeout(function() {
+            _clearLogsConfirmTimeout = null;
+            clearLogsButton.textContent = 'Clear All Logs';
+        }, 3000);
     }
 }
 
@@ -417,8 +429,11 @@ document.getElementById('saveSettings').addEventListener('click', () => {
     updateStatus('Settings saved.');
 });
 
-document.getElementById('resetSettings').addEventListener('click', () => {
-    if (confirm('Reset all settings to factory defaults?')) {
+resetSettingsButton.addEventListener('click', function() {
+    if (_resetSettingsConfirmTimeout) {
+        clearTimeout(_resetSettingsConfirmTimeout);
+        _resetSettingsConfirmTimeout = null;
+        resetSettingsButton.textContent = 'Reset to Defaults';
         config = {
             prices:  { ...DEFAULT_CONFIG.prices },
             flavors: [...DEFAULT_CONFIG.flavors],
@@ -429,6 +444,12 @@ document.getElementById('resetSettings').addEventListener('click', () => {
         updateButtonLabels();
         renderSettingsPanel();
         updateStatus('Settings reset to defaults.');
+    } else {
+        resetSettingsButton.textContent = 'Tap again to confirm';
+        _resetSettingsConfirmTimeout = setTimeout(function() {
+            _resetSettingsConfirmTimeout = null;
+            resetSettingsButton.textContent = 'Reset to Defaults';
+        }, 3000);
     }
 });
 
