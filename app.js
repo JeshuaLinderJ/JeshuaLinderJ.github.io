@@ -645,6 +645,10 @@ document.getElementById('addCustomItem').addEventListener('click', () => {
     const price = parseFloat(priceInput.value);
     if (!name) { updateStatus('Item name is required.'); return; }
     if (isNaN(price) || price < 0) { updateStatus('Enter a valid price.'); return; }
+    if (['Slice', 'Combo', 'Drink'].includes(name)) {
+        updateStatus('Name conflicts with a built-in item type.');
+        return;
+    }
     if (config.customItems.some(item => item.name === name)) {
         updateStatus('Custom item already exists.');
         return;
@@ -656,6 +660,7 @@ document.getElementById('addCustomItem').addEventListener('click', () => {
     renderSettingsPanel();
     renderCustomItemButtons();
     renderCustomSummaryTiles();
+    renderLogTable();
 });
 
 document.getElementById('newCustomItemName').addEventListener('keydown', (e) => {
@@ -698,12 +703,12 @@ document.getElementById('configDrinkList').addEventListener('click', (e) => {
 });
 
 // --- Initial Setup ---
+renderCustomSummaryTiles();
+renderCustomItemButtons();
 renderLogTable();
 populateSelects();
 setItemType('Slice');
 renderSettingsPanel();
-renderCustomItemButtons();
-renderCustomSummaryTiles();
 updateStatus('Ready. Previous logs restored.');
 
 // --- PWA Service Worker Registration ---
