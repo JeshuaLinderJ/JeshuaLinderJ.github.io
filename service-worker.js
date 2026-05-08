@@ -1,6 +1,6 @@
 /* Basic Service Worker for Caching */
 
-const CACHE_NAME = 'pizza-logger-cache-v6';
+const CACHE_NAME = 'pizza-logger-cache-v7';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -20,7 +20,6 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
-  self.skipWaiting();
 });
 
 // Fetch event: Serve cached assets if available, otherwise fetch from network

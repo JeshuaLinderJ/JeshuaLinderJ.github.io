@@ -10,7 +10,7 @@
     <title>LOXODON Pizza Logger</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#c0392b"/>
+    <meta name="theme-color" content="#c0392b"/> <!-- Pizza sauce Red :) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LOXODON Pizza Logger">
@@ -65,7 +65,7 @@
                     <span class="compact-stat-value" id="summaryDrinks">0</span>
                 </div>
                 <div class="compact-stat">
-                    <span class="compact-stat-label">Total</span>
+                    <span class="compact-stat-label">Sales</span>
                     <span class="compact-stat-value" id="summaryTotal">0</span>
                 </div>
             </div>
@@ -80,15 +80,6 @@
 
         <div class="status">
             <p id="statusMessage" aria-live="polite" aria-atomic="true">Ready.</p>
-        </div>
-
-        <div class="export">
-            <button id="exportCSV">Export Data to CSV</button>
-            <button id="clearLogsButton" class="danger-btn">Clear All Logs</button>
-            <details class="advanced-section">
-                <summary>Advanced</summary>
-                <button id="clearCacheButton" class="danger-btn">Clear Cache &amp; Reload</button>
-            </details>
         </div>
 
         <details class="settings-section">
@@ -125,6 +116,15 @@
                 </div>
             </div>
         </details>
+
+        <div class="export">
+            <button id="exportCSV">Export Data to CSV</button>
+            <button id="clearLogsButton" class="danger-btn">Clear All Logs</button>
+            <details class="advanced-section">
+                <summary>Advanced</summary>
+                <button id="clearCacheButton" class="danger-btn">Clear Cache &amp; Reload</button>
+            </details>
+        </div>
 
         <div class="log-display">
             <h2>Sales Log</h2>

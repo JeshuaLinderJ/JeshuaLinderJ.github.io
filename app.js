@@ -60,7 +60,7 @@ const summaryTotal   = document.getElementById('summaryTotal');
 let _logPending = false;
 let selectedType = 'Slice';
 let _undoTimeout      = null;
-let _pendingUndoTimestamp = null;
+let _pendingUndoId = null;
 let _clearLogsConfirmTimeout    = null;
 let _resetSettingsConfirmTimeout = null;
 let _displayedRevenueCents = 0;
@@ -68,7 +68,20 @@ let _revenueAnimFrame = null;
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
-let salesData = JSON.parse(localStorage.getItem('pizzaSales')) || [];
+let salesData = (function() {
+    try {
+        const raw = localStorage.getItem('pizzaSales');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.filter(function(s) {
+            return s !== null && typeof s === 'object' &&
+                   typeof s.Timestamp === 'string' &&
+                   typeof s.Item === 'string' &&
+                   typeof s.Price === 'number' && !isNaN(s.Price);
+        });
+    } catch (e) { return []; }
+})();
 
 // --- Functions ---
 
@@ -198,8 +211,12 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
     if (_logPending) return;
     _logPending = true;
     setTimeout(() => { _logPending = false; }, 400);
-    const timestamp = new Date().toISOString(); // Use ISO format for better compatibility
+    const timestamp = new Date().toISOString();
+    const saleId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
     salesData.push({
+        _id: saleId,
         Timestamp: timestamp,
         Item: itemType,
         'Pizza Flavor 1': flavor1,
@@ -214,13 +231,21 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
 }
 
 function populateSelects() {
-    [flavor1Select, flavor2Select].forEach(sel => {
+    [flavor1Select, flavor2Select].forEach(function(sel) {
         const current = sel.value;
-        sel.innerHTML = config.flavors.map(f => `<option>${f}</option>`).join('');
+        sel.replaceChildren(...config.flavors.map(function(f) {
+            const opt = document.createElement('option');
+            opt.textContent = f;
+            return opt;
+        }));
         if (config.flavors.includes(current)) sel.value = current;
     });
     const currentDrink = drinkSelect.value;
-    drinkSelect.innerHTML = config.drinks.map(d => `<option>${d}</option>`).join('');
+    drinkSelect.replaceChildren(...config.drinks.map(function(d) {
+        const opt = document.createElement('option');
+        opt.textContent = d;
+        return opt;
+    }));
     if (config.drinks.includes(currentDrink)) drinkSelect.value = currentDrink;
 }
 
@@ -239,7 +264,7 @@ function setItemType(type) {
     if (type === 'Slice') {
         flavor1Group.style.display  = '';
         flavor2Group.style.display  = 'none';
-        drinkGroup.style.display    = '';
+        drinkGroup.style.display    = 'none';
         flavor1Label.textContent    = 'Pizza Flavor';
         flavorPairRow.classList.remove('two-col');
     } else if (type === 'Combo') {
@@ -269,7 +294,7 @@ function handleLog() {
 
 function showUndoToast(sale) {
     if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
-    _pendingUndoTimestamp = sale.Timestamp;
+    _pendingUndoId = sale._id;
 
     let detail = '';
     if (sale.Item === 'Slice')      detail = sale['Pizza Flavor 1'];
@@ -290,15 +315,15 @@ function showUndoToast(sale) {
 
 function dismissUndoToast() {
     if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
-    _pendingUndoTimestamp = null;
+    _pendingUndoId = null;
     document.getElementById('undoToast').style.display = 'none';
 }
 
 function handleUndo() {
-    if (_pendingUndoTimestamp === null) return;
-    const ts = _pendingUndoTimestamp;
+    if (_pendingUndoId === null) return;
+    const id = _pendingUndoId;
     dismissUndoToast();
-    const idx = salesData.findIndex(function(s) { return s.Timestamp === ts; });
+    const idx = salesData.findIndex(function(s) { return s._id === id; });
     if (idx === -1) { updateStatus('Nothing to undo.'); return; }
     salesData.splice(idx, 1);
     saveSalesData();
@@ -311,13 +336,26 @@ function renderSettingsPanel() {
     document.getElementById('priceCombo').value = config.prices.Combo;
     document.getElementById('priceDrink').value = config.prices.Drink;
 
-    document.getElementById('configFlavorList').innerHTML = config.flavors.map((f, i) =>
-        `<div class="config-item"><span>${f}</span><button class="config-remove-btn" data-type="flavor" data-index="${i}" aria-label="Remove ${f}">×</button></div>`
-    ).join('');
+    function buildConfigList(container, items, type) {
+        container.replaceChildren(...items.map(function(item, i) {
+            const div = document.createElement('div');
+            div.className = 'config-item';
+            const span = document.createElement('span');
+            span.textContent = item;
+            const btn = document.createElement('button');
+            btn.className = 'config-remove-btn';
+            btn.dataset.type = type;
+            btn.dataset.index = i;
+            btn.setAttribute('aria-label', 'Remove ' + item);
+            btn.textContent = '×';
+            div.appendChild(span);
+            div.appendChild(btn);
+            return div;
+        }));
+    }
 
-    document.getElementById('configDrinkList').innerHTML = config.drinks.map((d, i) =>
-        `<div class="config-item"><span>${d}</span><button class="config-remove-btn" data-type="drink" data-index="${i}" aria-label="Remove ${d}">×</button></div>`
-    ).join('');
+    buildConfigList(document.getElementById('configFlavorList'), config.flavors, 'flavor');
+    buildConfigList(document.getElementById('configDrinkList'), config.drinks, 'drink');
 }
 
 function exportToCSV() {
@@ -355,7 +393,7 @@ function exportToCSV() {
     });
 
     // Create a link and trigger download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
@@ -375,15 +413,18 @@ function clearLogs() {
         clearTimeout(_clearLogsConfirmTimeout);
         _clearLogsConfirmTimeout = null;
         clearLogsButton.textContent = 'Clear All Logs';
+        clearLogsButton.classList.remove('danger-btn--armed');
         salesData = [];
         localStorage.removeItem('pizzaSales');
         renderLogTable();
         updateStatus('All log entries cleared.');
     } else {
         clearLogsButton.textContent = 'Tap again to confirm';
+        clearLogsButton.classList.add('danger-btn--armed');
         _clearLogsConfirmTimeout = setTimeout(function() {
             _clearLogsConfirmTimeout = null;
             clearLogsButton.textContent = 'Clear All Logs';
+            clearLogsButton.classList.remove('danger-btn--armed');
         }, 3000);
     }
 }
@@ -413,8 +454,7 @@ async function clearCacheAndReload() {
             }));
 
             updateStatus('Cache cleared. Reloading page...');
-            // 3. Force reload the page, bypassing browser cache
-            window.location.reload();
+            window.location.href = location.pathname + '?cache_bust=' + Date.now();
 
         } catch (error) {
             console.error('Error clearing cache or unregistering service worker:', error);
@@ -464,6 +504,7 @@ resetSettingsButton.addEventListener('click', function() {
         clearTimeout(_resetSettingsConfirmTimeout);
         _resetSettingsConfirmTimeout = null;
         resetSettingsButton.textContent = 'Reset to Defaults';
+        resetSettingsButton.classList.remove('danger-btn--armed');
         config = {
             prices:  { ...DEFAULT_CONFIG.prices },
             flavors: [...DEFAULT_CONFIG.flavors],
@@ -476,9 +517,11 @@ resetSettingsButton.addEventListener('click', function() {
         updateStatus('Settings reset to defaults.');
     } else {
         resetSettingsButton.textContent = 'Tap again to confirm';
+        resetSettingsButton.classList.add('danger-btn--armed');
         _resetSettingsConfirmTimeout = setTimeout(function() {
             _resetSettingsConfirmTimeout = null;
             resetSettingsButton.textContent = 'Reset to Defaults';
+            resetSettingsButton.classList.remove('danger-btn--armed');
         }, 3000);
     }
 });
@@ -487,6 +530,7 @@ document.getElementById('addFlavor').addEventListener('click', () => {
     const input = document.getElementById('newFlavor');
     const val = input.value.trim();
     if (!val) return;
+    if (config.flavors.includes(val)) { updateStatus('Flavor already exists.'); return; }
     config.flavors.push(val);
     input.value = '';
     saveConfig();
@@ -502,6 +546,7 @@ document.getElementById('addDrink').addEventListener('click', () => {
     const input = document.getElementById('newDrink');
     const val = input.value.trim();
     if (!val) return;
+    if (config.drinks.includes(val)) { updateStatus('Drink already exists.'); return; }
     config.drinks.push(val);
     input.value = '';
     saveConfig();
@@ -533,26 +578,30 @@ document.getElementById('configDrinkList').addEventListener('click', (e) => {
     renderSettingsPanel();
 });
 
-// --- PWA Service Worker Registration (Basic) ---
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js') // Adjust path if needed
-            .then(registration => {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                updateStatus('Ready (Offline support enabled).');
-            }, err => {
-                console.log('ServiceWorker registration failed: ', err);
-                updateStatus('Ready (Offline support might not work).');
-            });
-    });
-} else {
-    updateStatus('Ready (Service workers not supported).');
-}
-
 // --- Initial Setup ---
-// Initial render of the log table on page load
 renderLogTable();
 populateSelects();
 setItemType('Slice');
 renderSettingsPanel();
-updateStatus('Application loaded. Previous logs restored.'); // Update initial status
+updateStatus('Ready. Previous logs restored.');
+
+// --- PWA Service Worker Registration ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(function(reg) {
+                console.log('ServiceWorker registered:', reg.scope);
+            }, function(err) {
+                console.warn('ServiceWorker registration failed:', err);
+            });
+    });
+}
+
+// --- Keyboard shortcut: Enter on body logs current selection ---
+document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    const active = document.activeElement;
+    if (!active || active === document.body || active === document.documentElement) {
+        handleLog();
+    }
+});
