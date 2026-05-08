@@ -63,6 +63,8 @@ let _undoTimeout      = null;
 let _pendingUndoTimestamp = null;
 let _clearLogsConfirmTimeout    = null;
 let _resetSettingsConfirmTimeout = null;
+let _displayedRevenueCents = 0;
+let _revenueAnimFrame = null;
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -72,6 +74,34 @@ let salesData = JSON.parse(localStorage.getItem('pizzaSales')) || [];
 
 function updateStatus(message) {
     statusMessage.textContent = message;
+}
+
+function animateRevenue(fromCents, toCents) {
+    if (_revenueAnimFrame !== null) {
+        cancelAnimationFrame(_revenueAnimFrame);
+        _revenueAnimFrame = null;
+    }
+    if (fromCents === toCents) {
+        headerRevenue.textContent = '$' + (toCents / 100).toFixed(2);
+        _displayedRevenueCents = toCents;
+        return;
+    }
+    const duration = 400;
+    const start = performance.now();
+    function tick(now) {
+        const elapsed = now - start;
+        const t = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const current = Math.round(fromCents + (toCents - fromCents) * eased);
+        headerRevenue.textContent = '$' + (current / 100).toFixed(2);
+        _displayedRevenueCents = current;
+        if (t < 1) {
+            _revenueAnimFrame = requestAnimationFrame(tick);
+        } else {
+            _revenueAnimFrame = null;
+        }
+    }
+    _revenueAnimFrame = requestAnimationFrame(tick);
 }
 
 function saveSalesData() {
