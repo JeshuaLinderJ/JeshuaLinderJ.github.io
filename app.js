@@ -363,6 +363,54 @@ function renderSettingsPanel() {
 
     buildConfigList(document.getElementById('configFlavorList'), config.flavors, 'flavor');
     buildConfigList(document.getElementById('configDrinkList'), config.drinks, 'drink');
+
+    const customList = document.getElementById('configCustomItemList');
+    customList.replaceChildren(...config.customItems.map(function(item, i) {
+        const div = document.createElement('div');
+        div.className = 'config-item';
+        const span = document.createElement('span');
+        span.textContent = item.name + ' — $' + item.price.toFixed(2);
+        const btn = document.createElement('button');
+        btn.className = 'config-remove-btn';
+        btn.dataset.type = 'customItem';
+        btn.dataset.index = i;
+        btn.setAttribute('aria-label', 'Remove ' + item.name);
+        btn.textContent = '\xd7';
+        div.appendChild(span);
+        div.appendChild(btn);
+        return div;
+    }));
+}
+
+function renderCustomItemButtons() {
+    const container = document.getElementById('customItemButtons');
+    container.replaceChildren(...config.customItems.map(function(item, i) {
+        const btn = document.createElement('button');
+        btn.className = 'log-btn custom-item-btn';
+        btn.textContent = item.name + ' — $' + item.price.toFixed(2);
+        btn.dataset.index = i;
+        return btn;
+    }));
+}
+
+function renderCustomSummaryTiles() {
+    const summary = document.querySelector('.compact-summary');
+    summary.querySelectorAll('.custom-stat-tile').forEach(function(el) { el.remove(); });
+    const salesTile = document.getElementById('summaryTotal').closest('.compact-stat');
+    config.customItems.forEach(function(item) {
+        const div = document.createElement('div');
+        div.className = 'compact-stat custom-stat-tile';
+        const label = document.createElement('span');
+        label.className = 'compact-stat-label';
+        label.textContent = item.name;
+        const value = document.createElement('span');
+        value.className = 'compact-stat-value';
+        value.dataset.custom = item.name;
+        value.textContent = '0';
+        div.appendChild(label);
+        div.appendChild(value);
+        summary.insertBefore(div, salesTile);
+    });
 }
 
 function exportToCSV() {
@@ -563,6 +611,45 @@ document.getElementById('addDrink').addEventListener('click', () => {
 
 document.getElementById('newDrink').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('addDrink').click();
+});
+
+document.getElementById('addCustomItem').addEventListener('click', () => {
+    const nameInput = document.getElementById('newCustomItemName');
+    const priceInput = document.getElementById('newCustomItemPrice');
+    const name = sanitizeName(nameInput.value);
+    const price = parseFloat(priceInput.value);
+    if (!name) { updateStatus('Item name is required.'); return; }
+    if (isNaN(price) || price < 0) { updateStatus('Enter a valid price.'); return; }
+    if (config.customItems.some(item => item.name === name)) {
+        updateStatus('Custom item already exists.');
+        return;
+    }
+    config.customItems.push({ name, price });
+    nameInput.value = '';
+    priceInput.value = '';
+    saveConfig();
+    renderSettingsPanel();
+    renderCustomItemButtons();
+    renderCustomSummaryTiles();
+});
+
+document.getElementById('newCustomItemName').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('addCustomItem').click();
+});
+
+document.getElementById('newCustomItemPrice').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('addCustomItem').click();
+});
+
+document.getElementById('configCustomItemList').addEventListener('click', (e) => {
+    const btn = e.target.closest('.config-remove-btn');
+    if (!btn || btn.dataset.type !== 'customItem') return;
+    config.customItems.splice(parseInt(btn.dataset.index, 10), 1);
+    saveConfig();
+    renderSettingsPanel();
+    renderCustomItemButtons();
+    renderCustomSummaryTiles();
+    renderLogTable();
 });
 
 document.getElementById('configFlavorList').addEventListener('click', (e) => {
