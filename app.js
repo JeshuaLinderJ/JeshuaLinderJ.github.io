@@ -58,6 +58,8 @@ const summaryTotal   = document.getElementById('summaryTotal');
 
 let _logPending = false;
 let selectedType = 'Slice';
+let _undoTimeout      = null;
+let _pendingUndoIndex = null;
 
 // --- Data Storage ---
 // Attempt to load sales data from localStorage, or initialize an empty array
@@ -175,10 +177,7 @@ function logSale(itemType, price, flavor1, flavor2 = '', drink = '') {
     saveSalesData(); // Save after each log
     renderLogTable(); // Update the table display
     updateStatus(`Logged ${itemType} sale.`);
-    // Optionally reset selections here if desired
-    // flavor1Select.selectedIndex = 0;
-    // flavor2Select.selectedIndex = 0;
-    // drinkSelect.selectedIndex = 0;
+    showUndoToast(salesData[salesData.length - 1], salesData.length - 1);
 }
 
 function populateSelects() {
@@ -233,6 +232,43 @@ function handleLog() {
     } else {
         logSale('Drink', config.prices.Drink, '', '', drinkSelect.value);
     }
+}
+
+function showUndoToast(sale, index) {
+    if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
+    _pendingUndoIndex = index;
+
+    var detail = '';
+    if (sale.Item === 'Slice')      detail = sale['Pizza Flavor 1'];
+    else if (sale.Item === 'Combo') detail = sale['Pizza Flavor 1'] + ' + ' + sale['Pizza Flavor 2'];
+    else                            detail = sale.Drink;
+
+    document.getElementById('undoToastText').textContent =
+        'Logged ' + sale.Item + ' — ' + detail;
+
+    var bar = document.getElementById('undoProgressBar');
+    bar.style.animation = 'none';
+    bar.offsetHeight; // force reflow to restart animation
+    bar.style.animation = 'undoCountdown 5s linear forwards';
+
+    document.getElementById('undoToast').style.display = 'flex';
+    _undoTimeout = setTimeout(dismissUndoToast, 5000);
+}
+
+function dismissUndoToast() {
+    if (_undoTimeout) { clearTimeout(_undoTimeout); _undoTimeout = null; }
+    _pendingUndoIndex = null;
+    document.getElementById('undoToast').style.display = 'none';
+}
+
+function handleUndo() {
+    if (_pendingUndoIndex === null) return;
+    var index = _pendingUndoIndex;
+    dismissUndoToast();
+    salesData.splice(index, 1);
+    saveSalesData();
+    renderLogTable();
+    updateStatus('Sale undone.');
 }
 
 function renderSettingsPanel() {
@@ -357,15 +393,13 @@ clearLogsButton.addEventListener('click', clearLogs); // Add listener for clear 
 clearCacheButton.addEventListener('click', clearCacheAndReload); // Add listener for clear cache button
 
 // Add event listener for delete buttons (using event delegation)
-logTableBody.addEventListener('click', (event) => {
+logTableBody.addEventListener('click', function(event) {
     if (event.target.classList.contains('delete-btn')) {
-        const indexToDelete = parseInt(event.target.dataset.index, 10);
-        // Optional: Add a confirmation dialog
-        if (confirm('Are you sure you want to delete this log entry?')) {
-             deleteSale(indexToDelete);
-        }
+        deleteSale(parseInt(event.target.dataset.index, 10));
     }
 });
+
+document.getElementById('undoButton').addEventListener('click', handleUndo);
 
 document.getElementById('saveSettings').addEventListener('click', () => {
     const ps = parseFloat(document.getElementById('priceSlice').value);
