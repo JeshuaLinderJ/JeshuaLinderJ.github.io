@@ -658,22 +658,11 @@ button.danger-btn:hover {
     line-height: 1;
     min-height: unset;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-}
-
-.config-remove-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 44px;
-    min-height: 44px;
 }
 
 .config-remove-btn:hover { color: var(--color-danger-hover); background-color: rgba(0,0,0,0.06); }
