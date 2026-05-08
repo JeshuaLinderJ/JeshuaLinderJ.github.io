@@ -707,3 +707,29 @@ button.danger-btn:hover {
 }
 
 .settings-add-row button:hover { background-color: var(--color-primary-hover); }
+
+/* ── Custom Items ── */
+.settings-add-row input[type="number"] {
+    width: 90px;
+    padding: 7px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #fffdf8;
+    color: var(--color-text);
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+#customItemButtons:not(:empty) {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.custom-stat-tile .compact-stat-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

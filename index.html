@@ -51,6 +51,7 @@
                 </div>
             </div>
             <button id="logButton" class="log-btn">Log Slice &#8212; $2.50</button>
+            <div id="customItemButtons"></div>
             <div class="compact-summary">
                 <div class="compact-stat">
                     <span class="compact-stat-label">Slices</span>
@@ -113,6 +114,13 @@
                 <div class="settings-add-row">
                     <input type="text" id="newDrink" placeholder="New drink name">
                     <button id="addDrink">Add</button>
+                </div>
+                <h3>Custom Items</h3>
+                <div id="configCustomItemList" class="config-list"></div>
+                <div class="settings-add-row">
+                    <input type="text" id="newCustomItemName" maxlength="20" placeholder="Item name">
+                    <input type="number" id="newCustomItemPrice" min="0" step="0.01" placeholder="Price ($)">
+                    <button id="addCustomItem">Add</button>
                 </div>
             </div>
         </details>
