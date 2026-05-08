@@ -663,6 +663,17 @@ button.danger-btn:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.config-remove-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .config-remove-btn:hover { color: var(--color-danger-hover); background-color: rgba(0,0,0,0.06); }
